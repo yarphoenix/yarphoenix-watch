@@ -1,5 +1,5 @@
-import phoenix from "../assets/phoenix.png";
-import phoenixWhite from "../assets/phoenix-white.png";
+import phoenix from "../assets/phoenix-films.png";
+import phoenixWhite from "../assets/phoenix-films-white.png";
 
 // Tone → black & white poster palette. Mix of light & dark for rhythm.
 const TONES = [

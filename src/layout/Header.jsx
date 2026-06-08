@@ -1,5 +1,5 @@
 import '../index.css';
-import phoenix from '../assets/phoenix.png';
+import phoenix from '../assets/phoenix-films.png';
 
 const Header = ({ onHome, onFilter }) => {
     return (

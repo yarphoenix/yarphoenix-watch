@@ -1,4 +1,4 @@
-import phoenix from '../assets/phoenix.png';
+import phoenix from '../assets/phoenix-films.png';
 import { FilmAPI } from '../api/filmApi';
 
 const Footer = () => {
