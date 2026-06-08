@@ -39,6 +39,10 @@ jobs:
         env:
           # CRA turns ESLint warnings into errors when CI is set; keep warnings non-fatal.
           CI: false
+          # OMDb key for live data. NOTE: CRA inlines REACT_APP_* into the public
+          # client bundle, so on this public repo the key is visible in the deployed
+          # site's JS. Acceptable for a free, low-risk OMDb key.
+          REACT_APP_OMDB_KEY: ${{ secrets.REACT_APP_OMDB_KEY }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
