@@ -26,7 +26,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Match the Node/npm major used locally (npm 11) so `npm ci` resolves
+          # the same dependency tree the committed lockfile was generated with.
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
