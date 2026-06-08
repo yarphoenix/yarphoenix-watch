@@ -18,9 +18,6 @@ export const STRINGS = {
     "header.homeAria": "YARPHOENIX MOVIES — home",
     "header.logoAlt": "YARPHOENIX logo",
     "nav.primaryAria": "Primary",
-    "nav.films": "Films",
-    "nav.series": "Series",
-    "nav.browseAll": "Browse all",
     "lang.groupAria": "Language",
 
     // Footer
@@ -89,9 +86,6 @@ export const STRINGS = {
     "header.homeAria": "YARPHOENIX MOVIES — на главную",
     "header.logoAlt": "Логотип YARPHOENIX",
     "nav.primaryAria": "Основная навигация",
-    "nav.films": "Фильмы",
-    "nav.series": "Сериалы",
-    "nav.browseAll": "Все",
     "lang.groupAria": "Язык",
 
     // Footer

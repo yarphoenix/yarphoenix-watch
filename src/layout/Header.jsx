@@ -3,7 +3,7 @@ import phoenix from '../assets/phoenix-films.png';
 import { useT } from '../i18n/LanguageContext';
 import { LanguageToggle } from '../components/LanguageToggle';
 
-const Header = ({ onHome, onFilter }) => {
+const Header = ({ onHome }) => {
     const t = useT();
     return (
         <header className="site-header">
@@ -15,9 +15,6 @@ const Header = ({ onHome, onFilter }) => {
                     </span>
                 </button>
                 <nav className="nav" aria-label={t('nav.primaryAria')}>
-                    <button type="button" onClick={() => onFilter("movie")}>{t('nav.films')}</button>
-                    <button type="button" onClick={() => onFilter("series")}>{t('nav.series')}</button>
-                    <button type="button" onClick={() => onFilter("all")}>{t('nav.browseAll')}</button>
                     <LanguageToggle />
                 </nav>
             </div>

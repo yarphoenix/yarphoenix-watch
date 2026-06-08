@@ -56,7 +56,6 @@ function App() {
 
   const openFilm = (id) => setRoute({ name: "film", id });
   const goHome = () => setRoute({ name: "home" });
-  const setFilterAndHome = (val) => { setFilter(val); setQuery(""); setRoute({ name: "home" }); };
 
   useEffect(() => { window.scrollTo({ top: 0, behavior: "auto" }); }, [route]);
 
@@ -65,7 +64,7 @@ function App() {
   return (
     <div className="App">
       <a href="#main-content" className="skip-link visually-hidden">{t("app.skip")}</a>
-      <Header onHome={goHome} onFilter={setFilterAndHome} />
+      <Header onHome={goHome} />
       <main id="main-content" tabIndex={-1}>
         {route.name === "home" ? (
           <Home
