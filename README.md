@@ -15,7 +15,7 @@ monochrome identity.
 
 ## Features
 
-- **Curated featured catalogue** — 12 hand-picked IMDb titles fetched full and in
+- **Curated featured catalogue** — 15 hand-picked IMDb titles fetched full and in
   parallel as the landing view (before the visitor searches).
 - **Live search** — debounced (≈350 ms) queries against OMDb, with `All / Films /
   Series` filter chips and a live result count.
