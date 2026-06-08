@@ -1,70 +1,143 @@
-# Getting Started with Create React App
+# Yarphoenix Movies
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A black-and-white catalogue of films and series, built with React. It pulls live
+data from the [OMDb API](https://www.omdbapi.com/) and falls back to a bundled
+local catalogue, so the app keeps working offline or with no API key configured.
 
-## Available Scripts
+> _The catalogue of everything worth watching — kept in black and white so the
+> work speaks first._
 
-In the project directory, you can run:
+The interface is deliberately editorial: typographic placeholder posters, a
+phoenix wordmark, and real artwork rendered in grayscale to preserve the
+monochrome identity.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Curated featured catalogue** — 12 hand-picked IMDb titles fetched full and in
+  parallel as the landing view (before the visitor searches).
+- **Live search** — debounced (≈350 ms) queries against OMDb, with `All / Films /
+  Series` filter chips and a live result count.
+- **Detail pages** — poster, rating, runtime, year, genres, tagline, synopsis,
+  director, cast, plus a "More like this" row derived from the title's first genre.
+- **Offline-first fallback** — when no API key is set or every request fails, the
+  app transparently serves the local catalogue in [`src/api/data.js`](src/api/data.js)
+  and shows a "loaded from local storage" notice.
+- **Considered states** — shimmer loading skeletons, an error state with a retry
+  button, and an empty state for searches with no matches.
+- **Black-and-white poster system** — each title gets a deterministic `tone` (0–6)
+  that drives a light/dark placeholder palette; real OMDb artwork is shown
+  `grayscale` to stay on-brand.
+- **No router, no state library** — routing and data orchestration are handled
+  with plain React hooks in [`src/App.jsx`](src/App.jsx).
 
-### `npm test`
+## Tech stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Area        | Choice                                                                 |
+| ----------- | ---------------------------------------------------------------------- |
+| Framework   | React 19 + ReactDOM 19                                                 |
+| Tooling     | [Create React App](https://github.com/facebook/create-react-app) (`react-scripts` 5) |
+| Data        | [OMDb API](https://www.omdbapi.com/) with a local JS fallback catalogue |
+| Styling     | Plain CSS ([`src/index.css`](src/index.css)) + inline style objects     |
+| Typography  | Google Fonts (Space Grotesk, IBM Plex Mono, Hanken Grotesk) + local Microgramma display face |
+| Testing     | Testing Library (`jest-dom` / `react` / `user-event`) wired via CRA     |
 
-### `npm run build`
+## Getting started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- [Node.js](https://nodejs.org/) 18+ (recommended) and npm.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1. Install dependencies
 
-### `npm run eject`
+```bash
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 2. Configure an OMDb API key (optional)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Create a `.env.local` file in the project root:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```dotenv
+REACT_APP_OMDB_KEY=your_key_here
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Grab a free key at <https://www.omdbapi.com/apikey.aspx>.
 
-## Learn More
+> If the key is missing — or OMDb is unreachable or rate-limited — the app falls
+> back to the bundled local catalogue automatically, so it always runs.
+> `.env.local` is gitignored, so your key is never committed.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 3. Start the dev server
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm start
+```
 
-### Code Splitting
+Open <http://localhost:3000> to view it in the browser. The page reloads on edits.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Available scripts
 
-### Analyzing the Bundle Size
+| Command         | What it does                                                        |
+| --------------- | ------------------------------------------------------------------- |
+| `npm start`     | Run the app in development mode at `localhost:3000`.                |
+| `npm run build` | Build an optimized, minified production bundle into `build/`.       |
+| `npm test`      | Launch the CRA/Jest test runner in interactive watch mode.          |
+| `npm run eject` | Eject from CRA and copy the build config into the project (one-way).|
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Project structure
 
-### Making a Progressive Web App
+```
+src/
+├── api/
+│   ├── data.js          # Local fallback catalogue (18 fictional titles)
+│   └── filmApi.js       # OMDb data-access layer + record normalization
+├── assets/              # Phoenix logos + Microgramma display font
+├── components/
+│   ├── Grid.jsx         # Responsive poster grid (--cols custom property)
+│   ├── Poster.jsx       # B&W placeholder / grayscale-artwork poster + tone palette
+│   ├── PosterCard.jsx   # Grid card: poster + caption
+│   ├── SearchControls.jsx # Search input + filter chips + result count
+│   └── Skeleton.jsx     # Loading skeleton grid
+├── layout/
+│   ├── Header.jsx       # Sticky brand header + nav (Films / Series / Browse all)
+│   └── Footer.jsx       # Footer (shows whether data came from API or local)
+├── pages/
+│   ├── Home.jsx         # Hero + search + catalogue grid
+│   └── Detail.jsx       # Single title view + "More like this"
+├── App.jsx              # State-based routing + catalogue loading
+├── index.js             # React entry point
+└── index.css            # App styles
+public/
+└── index.html           # HTML shell, font preloads, CSS design tokens
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## How the data layer works
 
-### Advanced Configuration
+OMDb has no "list everything" endpoint — you can only search by term or fetch one
+title by IMDb id. [`FilmAPI`](src/api/filmApi.js) wraps that into three calls:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **`featured()`** — fetches a curated set of IMDb ids in parallel for the default
+  landing view.
+- **`search(query, { type })`** — live, type-filtered search (page 1 of results).
+- **`detail(imdbID)`** — one full record (rating, genres, cast, full plot).
 
-### Deployment
+Every OMDb response is mapped onto a single UI shape by `normalize()`. When no key
+is configured, the same functions read from [`data.js`](src/api/data.js) instead, so
+the UI code never has to know whether it's online.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Design notes
 
-### `npm run build` fails to minify
+- **Tone palette** — `Poster.jsx` defines 7 monochrome tones (light → black). A
+  title's tone is its stored value, or a stable hash of its id, so placeholders
+  stay consistent across renders.
+- **Grayscale artwork** — real OMDb posters are drawn with a `grayscale(1)` filter
+  and a gradient title overlay to match the placeholders.
+- **Routing** — there's no `react-router`; `App.jsx` holds a small `route` object
+  (`home` or `film`) and swaps pages, scrolling to top on each change.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+_Bootstrapped with Create React App. Phoenix branding and the local catalogue are
+original to this project._
