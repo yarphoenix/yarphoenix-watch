@@ -192,6 +192,9 @@
     .more .grid { grid-template-columns: repeat(2, 1fr); }
     .nav { gap: 16px; }
 }
+@media (max-width: 768px) {
+    .site-footer .inner { flex-direction: column; text-align: center; gap: 12px; }
+}
 
 /* ---------- Cast list (detail "Starring") ---------- */
 .cast { list-style: none; margin: 0; padding: 0; }
