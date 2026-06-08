@@ -5,7 +5,6 @@ import { Home } from "./pages/Home";
 import { Detail } from "./pages/Detail";
 import { FilmAPI } from "./api/filmApi";
 
-// Films are shown in a grid; this is the default column count.
 const COLUMNS = 5;
 
 function App() {
@@ -25,7 +24,7 @@ function App() {
       const data = q.trim()
         ? await FilmAPI.search(q, { type: type === "all" ? undefined : type })
         : (type === "all" ? await FilmAPI.featured() : (await FilmAPI.featured()).filter((f) => f.type === type));
-      if (mine !== reqId.current) return; // a newer request superseded this one
+      if (mine !== reqId.current) return;
       setFilms(data);
       setStatus("ready");
     } catch (e) {
