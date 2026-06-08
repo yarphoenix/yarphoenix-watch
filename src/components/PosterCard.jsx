@@ -4,8 +4,10 @@ import { Poster } from "./Poster";
 export function PosterCard({ film, onOpen, index }) {
   return (
     <button
+      type="button"
       className="card"
       onClick={() => onOpen(film.id)}
+      aria-label={`${film.title} (${film.year}, ${film.type === "series" ? "series" : "film"})`}
       style={{
         textAlign: "left",
         background: "none",

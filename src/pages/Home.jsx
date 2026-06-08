@@ -16,13 +16,13 @@ export function Home({ query, setQuery, filter, setFilter, results, onOpen, cols
         {status === "loading" ? (
           <SkeletonGrid cols={cols} />
         ) : status === "error" ? (
-          <div className="state-note">
+          <div className="state-note" role="alert">
             <div className="big">Couldn’t reach the catalogue.</div>
             <div>The API request failed. Check the connection and try again.</div>
-            <button className="btn ghost retry" onClick={onRetry}>Retry</button>
+            <button type="button" className="btn ghost retry" onClick={onRetry}>Retry</button>
           </div>
         ) : results.length === 0 ? (
-          <div className="empty">
+          <div className="empty" role="status">
             <div className="big">Nothing matches “{query}”.</div>
             <div>Try another title, or clear the filters.</div>
           </div>

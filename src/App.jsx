@@ -53,19 +53,22 @@ function App() {
   const areLocalFilms = status === "ready" && films.length > 0 && !films.some(r => r.id && r.id.startsWith('tt'));
   return (
     <div className="App">
+      <a href="#main-content" className="skip-link visually-hidden">Skip to content</a>
       <Header onHome={goHome} onFilter={setFilterAndHome} />
-      {route.name === "home" ? (
-        <Home
-          query={query} setQuery={setQuery}
-          filter={filter} setFilter={setFilter}
-          results={results} onOpen={openFilm}
-          cols={COLUMNS}
-          status={status} onRetry={() => loadCatalogue(query, filter)}
-          areLocalFilms={areLocalFilms}
-        />
-      ) : (
-        <Detail key={route.id} id={route.id} seed={films.find((f) => f.id === route.id)} onOpen={openFilm} onHome={goHome} />
-      )}
+      <main id="main-content" tabIndex={-1}>
+        {route.name === "home" ? (
+          <Home
+            query={query} setQuery={setQuery}
+            filter={filter} setFilter={setFilter}
+            results={results} onOpen={openFilm}
+            cols={COLUMNS}
+            status={status} onRetry={() => loadCatalogue(query, filter)}
+            areLocalFilms={areLocalFilms}
+          />
+        ) : (
+          <Detail key={route.id} id={route.id} seed={films.find((f) => f.id === route.id)} onOpen={openFilm} onHome={goHome} />
+        )}
+      </main>
       <Footer />
     </div>
   );
