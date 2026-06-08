@@ -41,7 +41,7 @@ export function PosterCard({ film, onOpen, index }) {
           }}
         >
           <span>{film.year}</span>
-          <span style={{textTransform: "capitalize"}}>{typeLabel}</span>
+          <span>{typeLabel}</span>
         </span>
       </div>
     </button>
