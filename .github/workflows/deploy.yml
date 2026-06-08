@@ -43,6 +43,9 @@ jobs:
           # client bundle, so on this public repo the key is visible in the deployed
           # site's JS. Acceptable for a free, low-risk OMDb key.
           REACT_APP_OMDB_KEY: ${{ secrets.REACT_APP_OMDB_KEY }}
+          # Kinopoisk key for the Russian catalogue (same public-bundle caveat).
+          # If the secret is unset, the RU version falls back to the local catalogue.
+          REACT_APP_KINOPOISK_KEY: ${{ secrets.REACT_APP_KINOPOISK_KEY }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

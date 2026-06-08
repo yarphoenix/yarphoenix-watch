@@ -1,5 +1,6 @@
 import phoenix from "../assets/phoenix-films.png";
 import phoenixWhite from "../assets/phoenix-films-white.png";
+import { useT } from "../i18n/LanguageContext";
 
 // Tone → black & white poster palette. Mix of light & dark for rhythm.
 const TONES = [
@@ -18,6 +19,7 @@ export function isDark(film) { return film.tone >= 3; }
 // Typographic placeholder "poster" — 2:3, brand watermark, big title.
 // When the API returns real artwork it is shown grayscale to keep the B&W identity.
 export function Poster({ film, variant = "card" }) {
+  const tr = useT();
   const t = toneFor(film);
   const dark = isDark(film);
   const mark = dark ? phoenixWhite : phoenix;
@@ -161,7 +163,7 @@ export function Poster({ film, variant = "card" }) {
           color: t.sub,
         }}
       >
-        <span>{film.type === "series" ? "Series" : "Feature"}</span>
+        <span>{film.type === "series" ? tr("poster.series") : tr("poster.feature")}</span>
         <span>{film.year}</span>
       </div>
       {/* title */}

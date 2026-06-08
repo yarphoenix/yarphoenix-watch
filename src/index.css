@@ -73,6 +73,17 @@
 }
 .chip:hover { border-color: var(--muted); }
 .chip[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* ---------- Language toggle (header) ---------- */
+.lang-toggle { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang-toggle .lang-btn {
+    background: none; border: none; color: var(--ink);
+    padding: 6px 11px; font-size: 11px; letter-spacing: 0.08em;
+    font-family: 'IBM Plex Mono', monospace; text-transform: uppercase;
+    opacity: 0.55; transition: background .2s ease, color .2s ease, opacity .2s ease;
+}
+.lang-toggle .lang-btn:hover { opacity: 1; }
+.lang-toggle .lang-btn[aria-pressed="true"] { background: var(--ink); color: #fff; opacity: 1; }
 .count {
     font-family: 'IBM Plex Mono', monospace; font-size: 12px;
     letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase;
