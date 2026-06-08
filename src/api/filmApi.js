@@ -35,6 +35,9 @@ const FEATURED_IDS = [
   "tt0944947", // Game of Thrones (series)
   "tt0109830", // Forrest Gump
   "tt0114369", // Se7en
+    "tt0114339", // Savage
+    "tt0122369", // The Abashiri Family
+    "tt0138044", // The Great Dictator
 ];
 
 const na = (v) => (v && v !== "N/A" ? v : null);
