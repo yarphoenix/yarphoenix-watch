@@ -1,13 +1,16 @@
 import { Poster } from "./Poster";
+import { useT } from "../i18n/LanguageContext";
 
 // Grid card: poster + caption underneath.
 export function PosterCard({ film, onOpen, index }) {
+  const t = useT();
+  const typeLabel = film.type === "series" ? t("card.series") : t("card.film");
   return (
     <button
       type="button"
       className="card"
       onClick={() => onOpen(film.id)}
-      aria-label={`${film.title} (${film.year}, ${film.type === "series" ? "series" : "film"})`}
+      aria-label={t("card.aria", film.title, film.year, typeLabel)}
       style={{
         textAlign: "left",
         background: "none",
@@ -38,7 +41,7 @@ export function PosterCard({ film, onOpen, index }) {
           }}
         >
           <span>{film.year}</span>
-          <span>{film.type === "series" ? "series" : "film"}</span>
+          <span>{typeLabel}</span>
         </span>
       </div>
     </button>
