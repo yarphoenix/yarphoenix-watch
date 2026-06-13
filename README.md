@@ -30,6 +30,11 @@ monochrome identity.
   `All / Films / Series` filter chips and a live result count.
 - **Detail pages** — poster, rating, runtime, year, genres, synopsis, director,
   cast, plus a "More like this" row derived from the title's first genre.
+- **Watch — find where to stream** — a _Смотреть / Watch_ action on every detail page
+  asks a companion backend (**yarphoenix-films-api**) to search external sources
+  (Rutube, VK) for full copies with Russian audio, then shows them as cards (preview,
+  source, duration) that open the source in a new tab. Results are ranked and
+  length-filtered server-side; the feature degrades gracefully when no backend is set.
 - **Offline-first fallback** — when a provider has no key or a request fails, it
   transparently serves the local catalogue in [`src/api/data.js`](src/api/data.js)
   and shows a local-catalogue notice.
@@ -48,6 +53,7 @@ monochrome identity.
 | Tooling     | [Create React App](https://github.com/facebook/create-react-app) (`react-scripts` 5) |
 | Data (EN)   | [OMDb API](https://www.omdbapi.com/)                                    |
 | Data (RU)   | [Kinopoisk](https://kinopoiskapiunofficial.tech/) (unofficial API)      |
+| Watch       | Companion **yarphoenix-films-api** (ASP.NET Core) over Rutube + VK      |
 | i18n        | Homegrown — React context + `{ en, ru }` dictionary + `t()` hook        |
 | Styling     | Plain CSS ([`src/index.css`](src/index.css)) + inline style objects     |
 | Typography  | Google Fonts (Space Grotesk, IBM Plex Mono, Hanken Grotesk) + local Microgramma |
@@ -72,10 +78,14 @@ Create a `.env.local` file in the project root:
 ```dotenv
 REACT_APP_OMDB_KEY=your_omdb_key
 REACT_APP_KINOPOISK_KEY=your_kinopoisk_key
+REACT_APP_WATCH_API=https://your-watch-api.example
 ```
 
 - **OMDb** (English) — free key at <https://www.omdbapi.com/apikey.aspx>
 - **Kinopoisk** (Russian) — free key at <https://kinopoiskapiunofficial.tech/>
+- **`REACT_APP_WATCH_API`** (optional) — base URL of the companion **yarphoenix-films-api**
+  backend that powers the _Watch_ feature. If unset, the _Watch_ button still appears but
+  the modal shows a "not available in this build" notice.
 
 > Each language degrades independently: if a provider's key is missing — or its API
 > is unreachable / rate-limited — **that** language falls back to the bundled local
@@ -110,6 +120,7 @@ src/
 │   ├── data.js              # Local fallback catalogue (18 titles)
 │   ├── shape.js             # Shared helpers: tone hashing, na(), local fallback
 │   ├── index.js             # getProvider(lang) — provider registry
+│   ├── watch.js             # Watch-search client → REACT_APP_WATCH_API
 │   └── providers/
 │       ├── omdb.js          # English provider (OMDb)
 │       └── kinopoisk.js     # Russian provider (Kinopoisk)
@@ -124,7 +135,8 @@ src/
 │   ├── PosterCard.jsx       # Grid card: poster + caption
 │   ├── SearchControls.jsx   # Search input + filter chips + result count
 │   ├── Skeleton.jsx         # Loading skeleton grid
-│   └── LanguageToggle.jsx   # EN | RU segmented control
+│   ├── LanguageToggle.jsx   # EN | RU segmented control
+│   └── WatchModal.jsx       # "Where to watch" results modal (portaled to <body>)
 ├── layout/
 │   ├── Header.jsx           # Sticky brand header + nav + language toggle
 │   └── Footer.jsx           # Footer (shows the active data source)
@@ -157,6 +169,24 @@ shared helpers in [`src/api/shape.js`](src/api/shape.js) serve the local catalog
 Adding a third source is just another file under `src/api/providers/` that returns
 the same shape — no UI changes required.
 
+## Watching (where to watch)
+
+Each detail page has a **Watch** (_Смотреть_) action. It calls a small companion
+backend — **yarphoenix-films-api** (ASP.NET Core) — at
+`${REACT_APP_WATCH_API}/api/watch/search`, passing the title, year, type and runtime.
+The backend searches external sources (**Rutube**, **VK**) for full copies with Russian
+audio, ranks them, and filters by how close each video's length is to the catalogued
+runtime (movies use a tight window; series only drop clips shorter than one episode).
+The frontend ([`src/api/watch.js`](src/api/watch.js)) renders the results in
+[`WatchModal`](src/components/WatchModal.jsx) as cards (preview, source, duration) that
+open the source in a new tab.
+
+The modal is rendered through a React portal into `<body>` so its full-viewport overlay
+isn't trapped by the detail page's `transform`, and it locks background scroll while open.
+The feature is optional — with no `REACT_APP_WATCH_API` set, the button shows a graceful
+"not available" notice. The backend must allow the site's origin via CORS and be served
+over HTTPS (the Pages site is HTTPS).
+
 ## Internationalization
 
 A lightweight homegrown layer (no i18n dependency):
@@ -171,9 +201,9 @@ other.
 
 Hosted on **GitHub Pages** and deployed automatically by **GitHub Actions**
 ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) on every push to
-`main`: CRA build → upload Pages artifact → deploy. API keys are injected from repo
-secrets at build time, and `homepage` in `package.json` sets the `/yarphoenix-movies/`
-base path.
+`main`: CRA build → upload Pages artifact → deploy. API keys and `REACT_APP_WATCH_API`
+are injected from repo secrets at build time, and `homepage` in `package.json` sets the
+`/yarphoenix-movies/` base path.
 
 ## Design notes
 
