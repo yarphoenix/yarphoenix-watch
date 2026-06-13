@@ -3,6 +3,7 @@ import { useLang } from "../i18n/LanguageContext";
 import { getProvider } from "../api";
 import { Poster } from "../components/Poster";
 import { Grid } from "../components/Grid";
+import { WatchModal } from "../components/WatchModal";
 
 export function Detail({ id, seed, onOpen, onHome }) {
   const { lang, t } = useLang();
@@ -12,7 +13,7 @@ export function Detail({ id, seed, onOpen, onHome }) {
   const [more, setMore] = useState([]);
   const [loading, setLoading] = useState(!seed || !seed.synopsis);
   const [failed, setFailed] = useState(false);
-  const [, setShowTrailer] = useState(false);
+  const [showWatch, setShowWatch] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -66,8 +67,7 @@ export function Detail({ id, seed, onOpen, onHome }) {
             <div className="spec"><dt className="k">{t("detail.genre")}</dt><dd className="v">{film.genres.length ? film.genres.join(" / ") : "—"}</dd></div>
           </dl>
           <div className="actions">
-            <button type="button" className="btn" onClick={() => setShowTrailer(true)}>{t("detail.watchTrailer")}</button>
-            <button type="button" className="btn ghost">{t("detail.watchlist")}</button>
+            <button type="button" className="btn" onClick={() => setShowWatch(true)}>{t("detail.watch")}</button>
           </div>
           <p className="synopsis">{loading ? t("detail.loadingDetails") : (film.synopsis || t("detail.noSynopsis"))}</p>
           <dl className="meta-cols">
@@ -96,6 +96,8 @@ export function Detail({ id, seed, onOpen, onHome }) {
           <Grid films={more} onOpen={onOpen} cols={4} />
         </section>
       )}
+
+      {showWatch && <WatchModal film={film} onClose={() => setShowWatch(false)} />}
     </article>
   );
 }

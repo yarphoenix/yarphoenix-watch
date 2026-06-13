@@ -46,6 +46,10 @@ jobs:
           # Kinopoisk key for the Russian catalogue (same public-bundle caveat).
           # If the secret is unset, the RU version falls back to the local catalogue.
           REACT_APP_KINOPOISK_KEY: ${{ secrets.REACT_APP_KINOPOISK_KEY }}
+          # Base URL of the watch-search backend (e.g. https://api.example.com). Public,
+          # kept as a secret so it can change without code edits. If unset, the "Смотреть"
+          # modal shows a graceful "not available in this build" notice.
+          REACT_APP_WATCH_API: ${{ secrets.REACT_APP_WATCH_API }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
