@@ -11,7 +11,12 @@ const Header = ({ onHome }) => {
                 <button type="button" className="brand" onClick={onHome} aria-label={t('header.homeAria')}>
                     <img src={phoenix} alt={t('header.logoAlt')} />
                     <span className="lockup">
-                        <span className="name wordmark">Yarphoenix Films</span>
+                        <span className="name wordmark" style={
+                            {display: "inline-block",
+                            width: 50}
+                        }>
+                            Yarphoenix Films
+                        </span>
                     </span>
                 </button>
                 <nav className="nav" aria-label={t('nav.primaryAria')}>
