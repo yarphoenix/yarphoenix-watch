@@ -13,7 +13,6 @@ export function Detail({ id, seed, onOpen, onHome }) {
   const [more, setMore] = useState([]);
   const [loading, setLoading] = useState(!seed || !seed.synopsis);
   const [failed, setFailed] = useState(false);
-  const [, setShowTrailer] = useState(false);
   const [showWatch, setShowWatch] = useState(false);
 
   useEffect(() => {
@@ -69,8 +68,6 @@ export function Detail({ id, seed, onOpen, onHome }) {
           </dl>
           <div className="actions">
             <button type="button" className="btn" onClick={() => setShowWatch(true)}>{t("detail.watch")}</button>
-            <button type="button" className="btn ghost" onClick={() => setShowTrailer(true)}>{t("detail.watchTrailer")}</button>
-            <button type="button" className="btn ghost">{t("detail.watchlist")}</button>
           </div>
           <p className="synopsis">{loading ? t("detail.loadingDetails") : (film.synopsis || t("detail.noSynopsis"))}</p>
           <dl className="meta-cols">
