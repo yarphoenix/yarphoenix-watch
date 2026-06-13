@@ -76,6 +76,19 @@ export const STRINGS = {
     "detail.backToCatalogue": "Back to catalogue",
     "detail.back": "← Back to catalogue",
     "detail.loading": "Loading…",
+
+    // Watch (find where to watch)
+    "detail.watch": "▶ Watch",
+    "watch.title": "Where to watch",
+    "watch.loading": "Searching sources…",
+    "watch.empty": "Nothing to watch found.",
+    "watch.emptyDetail": "Try the original title, or check back later.",
+    "watch.error": "Couldn’t reach the search service.",
+    "watch.partial": "Some sources didn’t respond — showing what we found.",
+    "watch.notConfigured": "Watching isn’t available in this build.",
+    "watch.close": "Close",
+    "watch.source.rutube": "Rutube",
+    "watch.source.vk": "VK",
   },
 
   ru: {
@@ -145,5 +158,18 @@ export const STRINGS = {
     "detail.backToCatalogue": "Назад к каталогу",
     "detail.back": "← Назад к каталогу",
     "detail.loading": "Загрузка…",
+
+    // Watch (где смотреть)
+    "detail.watch": "▶ Смотреть",
+    "watch.title": "Где смотреть",
+    "watch.loading": "Ищем источники…",
+    "watch.empty": "Ничего не нашлось для просмотра.",
+    "watch.emptyDetail": "Попробуйте оригинальное название или загляните позже.",
+    "watch.error": "Не удалось связаться с сервисом поиска.",
+    "watch.partial": "Часть источников не ответила — показываем найденное.",
+    "watch.notConfigured": "Просмотр недоступен в этой сборке.",
+    "watch.close": "Закрыть",
+    "watch.source.rutube": "Rutube",
+    "watch.source.vk": "VK",
   },
 };
