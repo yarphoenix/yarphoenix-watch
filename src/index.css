@@ -212,7 +212,8 @@
 
 /* ---------- Watch modal (find where to watch) ---------- */
 .watch-overlay {
-    position: fixed; inset: 0; z-index: 60;
+    /* Start below the 72px sticky header; cover the rest of the viewport and scroll internally. */
+    position: fixed; top: 72px; right: 0; bottom: 0; left: 0; z-index: 60;
     background: rgba(11,11,11,.62);
     backdrop-filter: blur(6px);
     display: flex; align-items: flex-start; justify-content: center;

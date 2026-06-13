@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useLang } from "../i18n/LanguageContext";
 import { searchWatchSources, watchConfigured } from "../api/watch";
 
@@ -52,7 +53,16 @@ export function WatchModal({ film, onClose }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  return (
+  // Lock background scroll while the modal is open.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  // Portal to <body> so the overlay's position:fixed is relative to the viewport,
+  // not the transformed .detail ancestor (which would otherwise clip/scroll it).
+  return createPortal(
     <div
       className="watch-overlay"
       onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
@@ -122,6 +132,7 @@ export function WatchModal({ film, onClose }) {
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
