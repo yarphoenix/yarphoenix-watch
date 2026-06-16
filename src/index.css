@@ -101,25 +101,37 @@
 .card { transition: transform .4s cubic-bezier(.2,.7,.2,1); }
 .card:hover { transform: translateY(-4px); }
 .card-poster { overflow: hidden; border-radius: var(--radius); box-shadow: 0 1px 0 var(--line); }
-.card:hover .poster { transform: scale(1.012); }
 /* hover invert: light posters → ink, dark posters → paper */
 .card:hover .poster[data-dark="0"] { background: var(--ink) !important; color: #fff !important; }
 .card:hover .poster[data-dark="1"] { background: #fafafa !important; color: var(--ink) !important; }
 .card:hover .poster[data-dark="0"] .poster-frame { border-color: rgba(255,255,255,.25) !important; }
 .card:hover .poster[data-dark="1"] .poster-frame { border-color: rgba(0,0,0,.16) !important; }
-.card:hover .poster img { transform: scale(1.01); }
+/* Poster artwork is two stacked layers: a grayscale base and a full-colour copy.
+   The colour copy is masked to a soft circle that follows the cursor (a "spotlight"),
+   so only the area under the pointer is coloured and it feathers back to B&W. */
 .poster__image {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(1) contrast(1.03);
-    transition: filter .35s ease, transform .5s cubic-bezier(.2,.7,.2,1);
+    filter: grayscale(1);
+    transition: transform .4s cubic-bezier(.2,.7,.2,1);
 }
-.poster:hover .poster__image {
+.poster__image--color {
     filter: none;
+    opacity: 0;
+    transition: opacity .25s ease, transform .5s cubic-bezier(.2,.7,.2,1);
+    --spot-r: 115px;
+    -webkit-mask-image: radial-gradient(circle var(--spot-r) at var(--spot-x, 50%) var(--spot-y, 50%), #000 0%, #000 32%, rgba(0,0,0,0) 100%);
+            mask-image: radial-gradient(circle var(--spot-r) at var(--spot-x, 50%) var(--spot-y, 50%), #000 0%, #000 32%, rgba(0,0,0,0) 100%);
 }
+.poster:hover .poster__image--color
+{
+    opacity: 1;
+}
+/* No hover on touch — keep posters B&W there. */
+@media (hover: none) { .poster__image--color { display: none; } }
 
 /* ---------- Section label (e.g. "More like this") ---------- */
 .section-label {

@@ -16,6 +16,15 @@ const TONES = [
 export function toneFor(film) { return TONES[film.tone % TONES.length]; }
 export function isDark(film) { return film.tone >= 3; }
 
+// Cursor-follow "spotlight": store the pointer position (relative to the poster) as CSS
+// custom properties so the colour layer's radial mask can centre on it.
+function trackSpotlight(e) {
+  const el = e.currentTarget;
+  const rect = el.getBoundingClientRect();
+  el.style.setProperty("--spot-x", `${e.clientX - rect.left}px`);
+  el.style.setProperty("--spot-y", `${e.clientY - rect.top}px`);
+}
+
 // Typographic placeholder "poster" — 2:3, brand watermark, big title.
 // When the API returns real artwork it is shown grayscale to keep the B&W identity.
 export function Poster({ film, variant = "card" }) {
@@ -51,6 +60,7 @@ export function Poster({ film, variant = "card" }) {
       <div
         className="poster"
         data-dark="1"
+        onMouseMove={trackSpotlight}
         style={{
           position: "relative",
           aspectRatio: "2 / 3",
@@ -59,11 +69,10 @@ export function Poster({ film, variant = "card" }) {
           background: "#0b0b0b",
         }}
       >
-        <img
-            className="poster__image"
-          src={film.poster}
-          alt={film.title}
-        />
+        {/* base layer — always grayscale */}
+        <img className="poster__image" src={film.poster} alt={film.title} />
+        {/* colour layer — revealed only within the cursor spotlight (see index.css) */}
+        <img className="poster__image poster__image--color" src={film.poster} alt="" aria-hidden="true" />
         <div
           aria-hidden="true"
           style={{
