@@ -79,25 +79,6 @@ export function Poster({ film, variant = "card" }) {
             background: "linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,0) 52%)",
           }}
         />
-        <div
-          className="wordmark"
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            padding: "clamp(12px, 1.6vw, 20px)",
-            color: "#fff",
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 600,
-            lineHeight: 0.96,
-            letterSpacing: "-0.01em",
-            fontSize: "clamp(16px, 1.9vw, 25px)",
-            textWrap: "balance",
-          }}
-        >
-          {film.title}
-        </div>
       </div>
     );
   }
