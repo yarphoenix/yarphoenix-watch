@@ -10,7 +10,7 @@ const Footer = () => {
             <div className="page inner">
                 <div className="fbrand">
                     <img src={phoenix} alt="" />
-                    <span className="wordmark" style={{ fontSize: "14px" }}>Yarphoenix Movies</span>
+                    <span className="wordmark" style={{ fontSize: "14px" }}>Yarphoenix Films</span>
                 </div>
                 <span className="fmark">© {new Date().getFullYear()} · {t("footer.tagline")} · {api.configured ? t("footer.viaApi") : t("footer.viaLocal")}</span>
             </div>
