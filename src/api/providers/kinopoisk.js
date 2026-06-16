@@ -12,7 +12,7 @@
 // With no REACT_APP_KINOPOISK_KEY the bundled local catalogue (data.js) is used.
 //
 // NOTE: exact endpoint paths/fields follow the live Swagger at
-// https://kinopoiskapiunofficial.tech/documentation/ — every network path here
+// https://kinopoiskapiunofficial.tech/documentation/api/ — every network path here
 // degrades gracefully to the local fallback if a request fails.
 // ---------------------------------------------------------------------------
 import { na, hashTone, localAll, localDelay, localFind, localSearch } from "../shape";
@@ -69,7 +69,7 @@ async function featured() {
   try {
     const data = await request("/api/v2.2/films/collections", {
       type: "TOP_POPULAR_ALL",
-      page: 1,
+      page: 3,
     });
     const items = Array.isArray(data.items) ? data.items : Array.isArray(data.films) ? data.films : [];
     const mapped = items.slice(0, FEATURED_COUNT).map(normalize).filter(Boolean);
