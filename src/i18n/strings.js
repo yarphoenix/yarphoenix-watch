@@ -87,6 +87,7 @@ export const STRINGS = {
     "watch.close": "Close",
     "watch.source.rutube": "Rutube",
     "watch.source.vk": "VK",
+    "watch.disclaimer": "Search results are selected automatically and may be inaccurate.",
   },
 
   ru: {
@@ -167,5 +168,6 @@ export const STRINGS = {
     "watch.close": "Закрыть",
     "watch.source.rutube": "Rutube",
     "watch.source.vk": "VK",
+      "watch.disclaimer": "Результаты подбираются автоматически и могут быть неточными.",
   },
 };

@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { useLang } from "../i18n/LanguageContext";
 import { searchWatchSources, watchConfigured } from "../api/watch";
 
-// Seconds → "2 ч 16 мин" / "2h 16m". Returns null when unknown.
 function formatDuration(sec, lang) {
   if (!sec || sec <= 0) return null;
   const h = Math.floor(sec / 3600);
@@ -129,6 +128,9 @@ export function WatchModal({ film, onClose }) {
                 );
               })}
             </ul>
+              <div className="watch-foot">
+                  <span className="watch-foot__disclaimer">{t("watch.disclaimer")}</span>
+              </div>
           </>
         )}
       </div>
