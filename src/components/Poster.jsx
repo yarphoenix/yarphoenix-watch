@@ -60,16 +60,9 @@ export function Poster({ film, variant = "card" }) {
         }}
       >
         <img
+            className="poster__image"
           src={film.poster}
           alt={film.title}
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            filter: "grayscale(1) contrast(1.03)",
-          }}
         />
         <div
           aria-hidden="true"
