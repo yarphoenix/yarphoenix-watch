@@ -68,8 +68,8 @@ async function featured() {
   if (!KP_API_KEY) { await localDelay(); return localAll(); }
   try {
     const data = await request("/api/v2.2/films/collections", {
-      type: "TOP_POPULAR_ALL",
-      page: 3,
+      type: "TOP_250_MOVIES",
+      page: 1,
     });
     const items = Array.isArray(data.items) ? data.items : Array.isArray(data.films) ? data.films : [];
     const mapped = items.slice(0, FEATURED_COUNT).map(normalize).filter(Boolean);
