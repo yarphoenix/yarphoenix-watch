@@ -11,6 +11,13 @@ function formatDuration(sec, lang) {
   return h ? `${h}h ${m}m` : `${m}m`;
 }
 
+// Stable filter-chip order, independent of how results are ranked/merged.
+const SOURCE_ORDER = ["rutube", "vk"];
+const sourceRank = (s) => {
+  const i = SOURCE_ORDER.indexOf(s);
+  return i === -1 ? SOURCE_ORDER.length : i;
+};
+
 // "Where to watch" overlay: searches the backend for playable copies of `film`
 // and shows them as cards that open the source in a new tab.
 export function WatchModal({ film, onClose }) {
@@ -18,6 +25,7 @@ export function WatchModal({ film, onClose }) {
   const [status, setStatus] = useState("loading"); // loading | ready | error | unconfigured
   const [results, setResults] = useState([]);
   const [partial, setPartial] = useState(false);
+  const [activeSource, setActiveSource] = useState("all");
   const closeRef = useRef(null);
 
   const year = (String(film.year).match(/\d{4}/) || [])[0];
@@ -34,7 +42,7 @@ export function WatchModal({ film, onClose }) {
     setStatus("loading");
     const controller = new AbortController();
     searchWatchSources({ title: film.title, year, type: film.type, lang, runtime, signal: controller.signal })
-      .then((r) => { setResults(r.results); setPartial(r.partial); setStatus("ready"); })
+      .then((r) => { setResults(r.results); setPartial(r.partial); setActiveSource("all"); setStatus("ready"); })
       .catch((e) => { if (e.name !== "AbortError") setStatus("error"); });
     return controller;
   }, [film.title, film.type, year, runtime, lang]);
@@ -58,6 +66,14 @@ export function WatchModal({ film, onClose }) {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prev; };
   }, []);
+
+  // Sources present in the results → drives the filter chips. Only worth showing
+  // when there's an actual choice (≥2 sources).
+  const availableSources = [...new Set(results.map((r) => r.source))]
+    .sort((a, b) => sourceRank(a) - sourceRank(b));
+  const visible = activeSource === "all"
+    ? results
+    : results.filter((r) => r.source === activeSource);
 
   // Portal to <body> so the overlay's position:fixed is relative to the viewport,
   // not the transformed .detail ancestor (which would otherwise clip/scroll it).
@@ -102,9 +118,37 @@ export function WatchModal({ film, onClose }) {
         {status === "ready" && results.length > 0 && (
           <>
             {partial && <div className="watch-partial">{t("watch.partial")}</div>}
+            {availableSources.length >= 2 && (
+              <div
+                className="filters"
+                role="group"
+                aria-label={t("watch.filterSource")}
+                style={{ margin: "2px 0 20px", flexWrap: "wrap" }}
+              >
+                <button
+                  type="button"
+                  className="chip"
+                  aria-pressed={activeSource === "all"}
+                  onClick={() => setActiveSource("all")}
+                >
+                  {t("filters.all")}
+                </button>
+                {availableSources.map((src) => (
+                  <button
+                    key={src}
+                    type="button"
+                    className="chip"
+                    aria-pressed={activeSource === src}
+                    onClick={() => setActiveSource(src)}
+                  >
+                    {t(`watch.source.${src}`)}
+                  </button>
+                ))}
+              </div>
+            )}
             {/* eslint-disable-next-line jsx-a11y/no-redundant-roles -- role="list" restores semantics WebKit drops with list-style:none */}
             <ul className="watch-grid" role="list">
-              {results.map((v, i) => {
+              {visible.map((v, i) => {
                 const dur = formatDuration(v.durationSec, lang);
                 return (
                   <li key={v.url}>
