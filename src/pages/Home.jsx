@@ -8,13 +8,12 @@ export function Home({ query, setQuery, filter, setFilter, results, onOpen, cols
   return (
     <div style={{ animation: "fadeIn .4s both" }}>
       <div className="page">
-        <div className="hero">
+        <div className="hero-bare">
           <h1>{t("home.heroPre")}<em>{t("home.heroEm")}</em></h1>
           <p className="blurb">{t("home.blurb")}</p>
         </div>
         <SearchControls query={query} setQuery={setQuery} filter={filter} setFilter={setFilter} count={results.length} />
-        <div style={{ height: "clamp(34px, 5vw, 60px)" }} />
-          {areLocalFilms && <h2 style={{fontFamily: "'Space Grotesk', sans-serif"}}>{t("home.localNotice")}</h2>}
+        <div style={{ height: "clamp(34px, 5vw, 25px)" }} />
           {areLocalFilms && <h2 style={{fontFamily: "var(--display-font)"}}>{t("home.localNotice")}</h2>}
         {status === "loading" ? (
           <SkeletonGrid cols={cols} />

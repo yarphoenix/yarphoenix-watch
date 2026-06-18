@@ -13,9 +13,6 @@ export function PosterCard({ film, onOpen, index }) {
       aria-label={t("card.aria", film.title, film.year, typeLabel)}
       style={{
         textAlign: "left",
-        background: "none",
-        border: "none",
-        padding: 0,
         color: "inherit",
         display: "block",
         width: "100%",
@@ -35,7 +32,6 @@ export function PosterCard({ film, onOpen, index }) {
             display: "flex",
             justifyContent: "space-between",
             fontSize: "12px",
-            color: "var(--muted)",
             fontFamily: "'IBM Plex Mono', monospace",
             letterSpacing: "0.04em",
           }}

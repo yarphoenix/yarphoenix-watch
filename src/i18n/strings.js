@@ -28,10 +28,10 @@ export const STRINGS = {
     "footer.viaLocal": "via local catalogue",
 
     // Home — hero
-    "home.heroPre": "The catalogue of ",
-    "home.heroEm": "everything worth watching.",
+    "home.heroPre": "Everything ",
+    "home.heroEm": "worth watching",
     "home.blurb":
-      "A curated index of films and series, kept in black and white so the work speaks first.",
+      "A curated index of films and series.",
     "home.localNotice": "It's a local catalogue",
 
     // Home — states
@@ -111,10 +111,10 @@ export const STRINGS = {
     "footer.viaLocal": "через локальный каталог",
 
     // Home — hero
-    "home.heroPre": "Каталог ",
-    "home.heroEm": "всего, что стоит посмотреть.",
+    "home.heroPre": "Всё, что ",
+    "home.heroEm": "стоит посмотреть",
     "home.blurb":
-      "Тщательно собранный каталог фильмов и сериалов — в чёрно-белом, чтобы на первом месте было само кино.",
+      "Тщательно собранный каталог фильмов и сериалов.",
     "home.localNotice": "Это локальный каталог",
 
     // Home — states
