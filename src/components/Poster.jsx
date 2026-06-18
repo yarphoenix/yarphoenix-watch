@@ -154,7 +154,7 @@ export function Poster({ film, variant = "card" }) {
         <div
           className="wordmark"
           style={{
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontFamily: "var(--display-font)",
             fontWeight: 600,
             lineHeight: 0.96,
             letterSpacing: "-0.01em",

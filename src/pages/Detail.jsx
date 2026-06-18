@@ -58,7 +58,7 @@ export function Detail({ id, seed, onOpen, onHome }) {
         <div className="detail-poster"><Poster film={film} /></div>
         <div>
           <div className="kicker">{film.type === "series" ? t("detail.kickerSeries") : t("detail.kickerFeature")} · {film.year}</div>
-          <h1 className="wordmark" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{film.title}</h1>
+          <h1 className="wordmark" style={{ fontFamily: "var(--display-font)" }}>{film.title}</h1>
           {film.tagline ? <p className="tagline">“{film.tagline}”</p> : <div style={{ height: "8px" }} />}
           <dl className="specs">
             <div className="spec"><dt className="k">{t("detail.rating")}</dt><dd className="v">★ {film.rating}</dd></div>

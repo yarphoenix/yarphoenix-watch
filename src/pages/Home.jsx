@@ -15,6 +15,7 @@ export function Home({ query, setQuery, filter, setFilter, results, onOpen, cols
         <SearchControls query={query} setQuery={setQuery} filter={filter} setFilter={setFilter} count={results.length} />
         <div style={{ height: "clamp(34px, 5vw, 60px)" }} />
           {areLocalFilms && <h2 style={{fontFamily: "'Space Grotesk', sans-serif"}}>{t("home.localNotice")}</h2>}
+          {areLocalFilms && <h2 style={{fontFamily: "var(--display-font)"}}>{t("home.localNotice")}</h2>}
         {status === "loading" ? (
           <SkeletonGrid cols={cols} />
         ) : status === "error" ? (
