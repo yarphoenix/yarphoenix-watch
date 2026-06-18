@@ -3,6 +3,7 @@ import phoenix from '../assets/phoenix-films.png';
 import { useT } from '../i18n/LanguageContext';
 import { LanguageToggle } from '../components/LanguageToggle';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { Logo } from '../components/Logo';
 
 const Header = ({ onHome }) => {
     const t = useT();

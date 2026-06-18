@@ -3,6 +3,7 @@ import { Header } from "./layout/Header";
 import { Footer } from "./layout/Footer";
 import { Home } from "./pages/Home";
 import { Detail } from "./pages/Detail";
+import { AuroraBackground } from "./components/AuroraBackground";
 import { getProvider } from "./api";
 import { useLang } from "./i18n/LanguageContext";
 
@@ -63,6 +64,7 @@ function App() {
   const areLocalFilms = status === "ready" && films.length > 0 && !api.configured;
   return (
     <div className="App">
+      <AuroraBackground />
       <a href="#main-content" className="skip-link visually-hidden">{t("app.skip")}</a>
       <Header onHome={goHome} />
       <main id="main-content" tabIndex={-1}>
