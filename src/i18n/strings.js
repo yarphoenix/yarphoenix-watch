@@ -19,6 +19,8 @@ export const STRINGS = {
     "header.logoAlt": "YARPHOENIX logo",
     "nav.primaryAria": "Primary",
     "lang.groupAria": "Language",
+    "theme.toDark": "Switch to dark theme",
+    "theme.toLight": "Switch to light theme",
 
     // Footer
     "footer.tagline": "Catalogue in black & white",
@@ -100,6 +102,8 @@ export const STRINGS = {
     "header.logoAlt": "Логотип YARPHOENIX",
     "nav.primaryAria": "Основная навигация",
     "lang.groupAria": "Язык",
+    "theme.toDark": "Переключить на тёмную тему",
+    "theme.toLight": "Переключить на светлую тему",
 
     // Footer
     "footer.tagline": "Каталог в чёрно-белом",

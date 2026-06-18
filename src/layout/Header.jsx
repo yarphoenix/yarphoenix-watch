@@ -2,6 +2,7 @@ import '../index.css';
 import phoenix from '../assets/phoenix-films.png';
 import { useT } from '../i18n/LanguageContext';
 import { LanguageToggle } from '../components/LanguageToggle';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const Header = ({ onHome }) => {
     const t = useT();
@@ -21,6 +22,7 @@ const Header = ({ onHome }) => {
                 </button>
                 <nav className="nav" aria-label={t('nav.primaryAria')}>
                     <LanguageToggle />
+                    <ThemeToggle />
                 </nav>
             </div>
         </header>

@@ -4,6 +4,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      /* FOUC guard: apply the saved (or system) theme to <html> before first
+         paint, so a pinned dark theme doesn't flash white on load. */
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          if (t === 'dark') document.documentElement.classList.add('theme-dark');
+          var m = document.querySelector('meta[name="color-scheme"]');
+          if (m) m.setAttribute('content', t);
+        } catch (e) {}
+      })();
+    </script>
     <meta
       name="description"
       content="A black-and-white catalogue of films and series — browse and search titles, with details from OMDb."
@@ -15,13 +31,14 @@
 	  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Hanken+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
 	  <style>
 		  :root {
+			  color-scheme: light;
 			  --bg: #ffffff;
 			  --ink: #0b0b0b;
 			  --paper: #fafafa;
 			  /* overridden by tweaks */
 			  --ui-font: 'Hanken Grotesk', system-ui, sans-serif;
 			  --line: #e6e6e6;
-			  --muted: #8a8a8a;
+			  --muted: rgba(255, 255, 240, 0.8);
 			  --radius: 4px;
 		  }
 
