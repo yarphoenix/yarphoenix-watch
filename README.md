@@ -13,12 +13,27 @@ back to a bundled local catalogue, so it keeps working offline or with no API ke
 
 The interface is deliberately editorial: typographic placeholder posters, a
 phoenix wordmark, and real artwork rendered in grayscale to preserve the
-monochrome identity.
+monochrome identity. **Dark and light themes** float over an interactive,
+GPU-rendered **aurora** field, with the controls resting on **liquid-glass**
+surfaces.
 
 ---
 
 ## Features
 
+- **Dark & light themes** — a header switch toggles them; the choice follows the
+  OS `prefers-color-scheme` until pinned, then persists in `localStorage` and is
+  applied before first paint (no flash) via `color-scheme` + an inline boot script.
+- **Interactive aurora background** — a full-page WebGL field of monochrome “smoke”
+  that drifts over time, bends toward the cursor and ripples on click. Heavily
+  optimized: downscaled render buffer, capped frame rate, paused while the tab is
+  hidden, a single static frame under `prefers-reduced-motion`, and a CSS fallback
+  when WebGL is unavailable.
+- **Liquid-glass surfaces** — the search bar, filter chips and poster cards are
+  `backdrop-filter` glass tiles, theme-tuned so they read over either palette.
+- **Russian display face** — switching to RU swaps the Space Grotesk headline font
+  for a self-hosted **PP Neue Machina**, driven purely by `<html lang>` and a CSS
+  variable (no JS).
 - **English & Russian** — one header toggle flips the entire UI (homegrown i18n)
   and the data source. The choice is auto-detected from the browser, persisted in
   `localStorage`, and reflected in `<html lang>`.
@@ -55,8 +70,10 @@ monochrome identity.
 | Data (RU)   | [Kinopoisk](https://kinopoiskapiunofficial.tech/) (unofficial API)      |
 | Watch       | Companion **yarphoenix-films-api** (ASP.NET Core) over Rutube + VK      |
 | i18n        | Homegrown — React context + `{ en, ru }` dictionary + `t()` hook        |
-| Styling     | Plain CSS ([`src/index.css`](src/index.css)) + inline style objects     |
-| Typography  | Google Fonts (Space Grotesk, IBM Plex Mono, Hanken Grotesk) + local Microgramma |
+| Styling     | Plain CSS ([`src/index.css`](src/index.css)) + inline styles, CSS-variable design tokens, liquid glass (`backdrop-filter`) |
+| Theming     | Dark/light via `color-scheme` + a `.theme-dark` class on `<html>`, persisted in `localStorage` |
+| Background  | Custom full-page WebGL fragment shader ([`src/lib/aurora.js`](src/lib/aurora.js)) — vanilla, no deps |
+| Typography  | Google Fonts (Space Grotesk, IBM Plex Mono, Hanken Grotesk) + local Microgramma & PP Neue Machina (RU display) |
 | Hosting     | GitHub Pages, auto-deployed via GitHub Actions                          |
 
 ## Getting started
@@ -128,26 +145,33 @@ src/
 │   ├── strings.js           # { en, ru } UI string dictionary
 │   ├── plural.js            # Russian plural-form helper
 │   └── LanguageContext.jsx  # LanguageProvider + useLang() / useT()
-├── assets/                  # Phoenix logos + Microgramma display font
+├── assets/                  # Phoenix logos, Microgramma + PP Neue Machina (fonts/)
+├── lib/
+│   └── aurora.js            # Optimized mono WebGL aurora shader (vanilla, no deps)
+├── theme/
+│   └── ThemeContext.jsx     # ThemeProvider + useTheme() — dark/light, persisted
 ├── components/
+│   ├── AuroraBackground.jsx # Mounts the full-page WebGL aurora + readability scrim
 │   ├── Grid.jsx             # Responsive poster grid (--cols custom property)
+│   ├── Logo.jsx             # Theme-aware phoenix wordmark (reused in header/footer)
 │   ├── Poster.jsx           # B&W placeholder / grayscale-artwork poster + tones
-│   ├── PosterCard.jsx       # Grid card: poster + caption
+│   ├── PosterCard.jsx       # Grid card: liquid-glass tile + poster + caption
 │   ├── SearchControls.jsx   # Search input + filter chips + result count
 │   ├── Skeleton.jsx         # Loading skeleton grid
 │   ├── LanguageToggle.jsx   # EN | RU segmented control
+│   ├── ThemeToggle.jsx      # Light/dark header switch
 │   └── WatchModal.jsx       # "Where to watch" results modal (portaled to <body>)
 ├── layout/
-│   ├── Header.jsx           # Sticky brand header + nav + language toggle
+│   ├── Header.jsx           # Sticky header: Logo + language & theme toggles
 │   └── Footer.jsx           # Footer (shows the active data source)
 ├── pages/
 │   ├── Home.jsx             # Hero + search + catalogue grid
 │   └── Detail.jsx           # Single title view + "More like this"
 ├── App.jsx                  # Routing + language-driven catalogue loading
-├── index.js                 # Entry point — wraps <App> in <LanguageProvider>
+├── index.js                 # Entry point — wraps <App> in Theme + Language providers
 └── index.css                # App styles
 public/
-└── index.html               # HTML shell, font preloads, CSS design tokens
+└── index.html               # HTML shell, fonts, theme/glass tokens, FOUC boot script
 ```
 
 ## How the data layer works
@@ -207,6 +231,15 @@ are injected from repo secrets at build time, and `homepage` in `package.json` s
 
 ## Design notes
 
+- **Theming** — light/dark are CSS-variable token sets toggled by a `.theme-dark`
+  class on `<html>`; `color-scheme` plus a tiny inline boot script apply the saved
+  (or system) theme before first paint, so there's no flash.
+- **Aurora field** — one fragment shader (domain-warped FBM noise) drawn to a fixed
+  full-viewport canvas behind the app; the light theme is the same field negated.
+  Render is downscaled and frame-capped, pauses on tab-hide, and collapses to a
+  single static frame under `prefers-reduced-motion` (CSS gradient if no WebGL).
+- **Liquid glass** — the search bar, chips and cards share `--glass-*` tokens
+  (`backdrop-filter` blur + saturate), tuned per theme so they read over the field.
 - **Tone palette** — `Poster.jsx` defines 7 monochrome tones (light → black). A
   title's tone is its stored value, or a stable hash of its id, so placeholders stay
   consistent across renders.
