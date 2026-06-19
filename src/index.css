@@ -201,9 +201,6 @@ input { font-family: inherit; }
 .searchbar input::placeholder {
     color: var(--muted);
 }
-.searchbar input::placeholder .theme-dark {
-    color: var(--muted);
-}
 
 .searchbar .clear {
     background: none;
