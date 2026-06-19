@@ -1,6 +1,8 @@
 @font-face {
     font-family: 'Microgramma';
-    src: url('../src/assets/microgramma.ttf') format('truetype');
+    src: url('assets/fonts/microgramma-webfont.woff2') format('woff2'),
+         url('assets/fonts/microgramma-webfont.woff') format('woff'),
+         url('assets/fonts/microgramma.ttf') format('truetype');
     font-weight: 700;
     font-display: swap;
 }
