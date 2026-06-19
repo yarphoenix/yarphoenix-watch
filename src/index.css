@@ -118,7 +118,7 @@
     color: var(--ink);
 }
 .searchbar input::placeholder {
-    color: #8a8a8a;
+    color: var(--muted);
 }
 .searchbar input::placeholder .theme-dark {
     color: var(--muted);
