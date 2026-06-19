@@ -15,7 +15,8 @@ export const Logo = () => {
                         <span className="name wordmark" style={
                             {
                                 display: "inline-block",
-                                width: 50
+                                width: "min-content",
+                                whiteSpace: "normal",
                             }
                         }>
                             Yarphoenix Films
