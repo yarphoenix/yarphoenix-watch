@@ -26,6 +26,25 @@
 const RENDER_SCALE = 0.62; // backing-store px per CSS px before DPR — soft field hides it
 const MAX_DPR = 1.5;
 const FPS_CAP = 32; // the field drifts at time*0.06, so ~32fps is imperceptibly smooth
+const NOISE_N = 256; // value-noise tile size (power-of-two so the texture can REPEAT)
+
+// Deterministic 256×256 white-noise tile (seeded xorshift32). Baking the noise
+// into a texture — instead of a float hash in the shader — makes the field
+// render identically on every GPU: hardware bilinear sampling is uniform across
+// Mali/Adreno/Apple/desktop, where the old `fract(p.x*p.y)` hash banded and
+// "trailed" on Android's limited fragment-shader float precision. Seeded (not
+// Math.random) so every device bakes the same bytes → the same field.
+const NOISE_DATA = (() => {
+  const d = new Uint8Array(NOISE_N * NOISE_N);
+  let s = 0x9e3779b9 >>> 0;
+  for (let i = 0; i < d.length; i++) {
+    s ^= s << 13; s >>>= 0;
+    s ^= s >>> 17;
+    s ^= s << 5; s >>>= 0;
+    d[i] = s & 0xff;
+  }
+  return d;
+})();
 
 const VERT = `
   attribute vec2 p;
@@ -33,7 +52,12 @@ const VERT = `
 `;
 
 const FRAG = `
+  #ifdef GL_FRAGMENT_PRECISION_HIGH
   precision highp float;
+  #else
+  precision mediump float;
+  #endif
+  uniform sampler2D u_noise;
   uniform vec2  u_res;
   uniform float u_time;
   uniform vec2  u_mouse;     // 0..1, y up
@@ -42,17 +66,12 @@ const FRAG = `
   uniform float u_invert;    // 0 = dark theme, 1 = negate (light theme)
   uniform vec3  u_click;     // xy = pos(0..1), z = age seconds (<0 = none)
 
-  float hash(vec2 p){
-    p = fract(p * vec2(123.34, 345.45));
-    p += dot(p, p + 34.345);
-    return fract(p.x * p.y);
-  }
+  // Value noise sampled from the deterministic tile (REPEAT-wrapped). Hardware
+  // bilinear filtering is identical on every GPU, so there's no float-precision
+  // hash to band/trail on Android. 256 texels == 256 units, matching the old
+  // lattice spacing of 1; +0.5 centres samples on texel centres.
   float noise(vec2 p){
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(mix(hash(i), hash(i + vec2(1.0,0.0)), u.x),
-               mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
+    return texture2D(u_noise, (p + 0.5) / 256.0).r;
   }
   // 4-octave FBM (down from 6) — enough texture once the field is downscaled.
   float fbm(vec2 p){
@@ -177,6 +196,17 @@ export function mountAurora(canvas, opts = {}) {
       invert: gl.getUniformLocation(prog, "u_invert"),
       click: gl.getUniformLocation(prog, "u_click"),
     };
+
+    // Upload the baked noise tile to unit 0 (POT + REPEAT so the warped domain
+    // can wrap freely; LINEAR so sampling smooths between texels).
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, NOISE_N, NOISE_N, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, NOISE_DATA);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.uniform1i(gl.getUniformLocation(prog, "u_noise"), 0);
     return true;
   }
   // If the very first setup fails (no WebGL / lost context), degrade to the
@@ -232,6 +262,10 @@ export function mountAurora(canvas, opts = {}) {
     const age = state.clickStart >= 0 ? (tMs - state.clickStart) / 1000 : -1;
     gl.uniform3f(U.click, state.click[0], state.click[1], age > 2.4 ? -1 : age);
 
+    // Clear first: on tile-based mobile GPUs this discards the previous tile
+    // contents (a cheap "fast clear") instead of reloading them, avoiding the
+    // ghosting/"trails" some Android drivers show without it.
+    gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
