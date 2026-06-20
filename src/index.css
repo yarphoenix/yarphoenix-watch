@@ -200,7 +200,7 @@ input { font-family: inherit; }
     color: var(--ink);
 }
 .searchbar input::placeholder {
-    color: var(--muted);
+    color: var(--chip-title);
 }
 
 .searchbar .clear {
@@ -280,48 +280,43 @@ input { font-family: inherit; }
     opacity: 1;
 }
 
-/* ---------- Theme toggle (header light/dark switch) ---------- */
+/* ---------- Theme toggle (header light/dark switch) ----------
+   Pill with a sliding knob that carries a sun (light) / moon (dark) icon.
+   Colours follow the project tokens; the knob is the ink/paper inversion. */
 .theme-toggle {
     display: inline-flex;
     align-items: center;
-    padding: 0;
-    background: none;
-    border: none;
-}
-.theme-toggle .tt-track {
-    position: relative;
-    width: 50px;
-    height: 26px;
+    justify-content: flex-start;
+    width: 52px;
+    height: 28px;
+    padding: 3px;
     border-radius: 999px;
-    background: var(--paper);
     border: 1px solid var(--line);
-    display: inline-flex;
-    align-items: center;
-    transition: background .25s ease, border-color .25s ease;
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background-color .25s ease, border-color .25s ease;
 }
-.theme-toggle .tt-thumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
+.theme-toggle:hover { border-color: var(--muted); }
+.theme-toggle__knob {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    line-height: 1;
     background: var(--ink);
     color: var(--bg);
-    transition: transform .28s cubic-bezier(.2,.7,.2,1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .28s cubic-bezier(.2,.7,.2,1), background-color .25s ease, color .25s ease;
 }
-/* checked = dark theme → thumb slides right */
-.theme-toggle[aria-checked="true"] .tt-thumb {
-    transform: translateX(24px);
-}
-.theme-toggle:hover .tt-track {
-    border-color: var(--muted);
-}
+/* dark = knob slides to the far end (smooth, like the rest of the UI) */
+.theme-toggle[data-theme="dark"] .theme-toggle__knob { transform: translateX(22px); }
+.theme-toggle__icon { width: 13px; height: 13px; display: none; }
+.theme-toggle__icon--sun { display: block; }
+.theme-toggle[data-theme="dark"] .theme-toggle__icon--sun { display: none; }
+.theme-toggle[data-theme="dark"] .theme-toggle__icon--moon { display: block; }
+.theme-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .count {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
