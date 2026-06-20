@@ -27,6 +27,7 @@
     --display-font: 'Space Grotesk', system-ui, sans-serif;
     --line: #e6e6e6;
     --muted: rgba(255, 255, 240, 0.8);
+    --chip-title: #505050;
     --radius: 4px;
     /* Liquid-glass tokens (theme-switched) + sticky surface colour.
        Light theme reads over the pale inverted aurora. */
@@ -47,6 +48,7 @@
     --paper: rgba(255, 255, 255, 0.06);
     --line: rgba(255, 255, 255, 0.3);
     --muted: rgba(255, 255, 255, 0.5);
+    --chip-title: rgba(255, 255, 255, 0.5);
     --glass-blur: blur(16px) saturate(1.5);
     --glass-blur-soft: blur(12px) saturate(1.5);
     --glass-bg: rgba(255, 255, 255, 0.07);
@@ -56,8 +58,7 @@
     --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 24px rgba(0, 0, 0, 0.18);
     --surface-bg: rgba(8, 10, 16, 0.55);
 }
-/* Russian: swap the Space Grotesk display face for PP Neue Machina
-   (LanguageContext sets <html lang="ru">). */
+
 :root[lang="ru"] {
     --display-font: 'PP Neue Machina', 'Space Grotesk', system-ui, sans-serif;
 }
@@ -416,7 +417,7 @@ input { font-family: inherit; }
     font-size: 11px;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--chip-title);
     margin: 0 0 24px;
     display: flex;
     align-items: center;
@@ -596,28 +597,28 @@ input { font-family: inherit; }
     color: #444;
     margin: 0 0 32px;
 }
+/* Film specs — each characteristic in its own liquid-glass chip. */
 .specs {
     display: flex;
     flex-wrap: wrap;
-    gap: 0;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    gap: 10px;
     margin: 0 0 34px;
 }
 .spec {
-    padding: 18px 28px 18px 0;
-    margin-right: 28px;
-    border-right: 1px solid var(--line);
-}
-.spec:last-child {
-    border-right: none;
+    padding: 12px 18px;
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur-soft);
+    -webkit-backdrop-filter: var(--glass-blur-soft);
+    box-shadow: var(--glass-shadow);
 }
 .spec .k {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--chip-title);
     margin-bottom: 7px;
 }
 .spec .v {
