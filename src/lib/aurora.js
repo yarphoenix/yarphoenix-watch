@@ -27,6 +27,7 @@ const RENDER_SCALE = 0.62; // backing-store px per CSS px before DPR — soft fi
 const MAX_DPR = 1.5;
 const FPS_CAP = 32; // the field drifts at time*0.06, so ~32fps is imperceptibly smooth
 const NOISE_N = 256; // value-noise tile size (power-of-two so the texture can REPEAT)
+const MAX_RIPPLES = 8; // click ripples that can be on screen at once (older ones recycle)
 
 // Deterministic 256×256 white-noise tile (seeded xorshift32). Baking the noise
 // into a texture — instead of a float hash in the shader — makes the field
@@ -57,6 +58,7 @@ const FRAG = `
   #else
   precision mediump float;
   #endif
+  #define MAX_RIPPLES ${MAX_RIPPLES}
   uniform sampler2D u_noise;
   uniform vec2  u_res;
   uniform float u_time;
@@ -64,7 +66,7 @@ const FRAG = `
   uniform float u_mouseAmt;  // pointer presence 0..1
   uniform float u_intensity;
   uniform float u_invert;    // 0 = dark theme, 1 = negate (light theme)
-  uniform vec3  u_click;     // xy = pos(0..1), z = age seconds (<0 = none)
+  uniform vec3  u_clicks[MAX_RIPPLES]; // each: xy = pos(0..1), z = age seconds (<0 = inactive)
 
   // Value noise sampled from the deterministic tile (REPEAT-wrapped). Hardware
   // bilinear filtering is identical on every GPU, so there's no float-precision
@@ -116,15 +118,18 @@ const FRAG = `
     float glow = u_mouseAmt * (0.12 / (md * md + 0.04));
     col += vec3(0.6) * glow * 0.18;
 
-    // click ripple
-    if (u_click.z >= 0.0) {
-      vec2 cp = u_click.xy; cp.x *= aspect;
-      float d = length(st - cp);
-      float age = u_click.z;
-      float radius = age * 0.9;
-      float ring = smoothstep(0.06, 0.0, abs(d - radius));
-      float fade = exp(-age * 2.2);
-      col += vec3(0.7, 0.8, 1.0) * ring * fade * 0.6;
+    // click ripples — several can coexist on screen at once
+    for (int i = 0; i < MAX_RIPPLES; i++) {
+      vec3 c = u_clicks[i];
+      if (c.z >= 0.0) {
+        vec2 cp = c.xy; cp.x *= aspect;
+        float d = length(st - cp);
+        float age = c.z;
+        float radius = age * 0.9;
+        float ring = smoothstep(0.06, 0.0, abs(d - radius));
+        float fade = exp(-age * 2.2);
+        col += vec3(0.7, 0.8, 1.0) * ring * fade * 0.6;
+      }
     }
 
     col *= 0.85 + 0.4 * u_intensity;
@@ -194,7 +199,7 @@ export function mountAurora(canvas, opts = {}) {
       mouseAmt: gl.getUniformLocation(prog, "u_mouseAmt"),
       intensity: gl.getUniformLocation(prog, "u_intensity"),
       invert: gl.getUniformLocation(prog, "u_invert"),
-      click: gl.getUniformLocation(prog, "u_click"),
+      clicks: gl.getUniformLocation(prog, "u_clicks[0]"),
     };
 
     // Upload the baked noise tile to unit 0 (POT + REPEAT so the warped domain
@@ -225,9 +230,14 @@ export function mountAurora(canvas, opts = {}) {
     mouseTarget: [0.5, 0.5],
     mouseAmt: 0,
     mouseAmtTarget: 0,
-    click: [0, 0, -1],
-    clickStart: -1,
+    // Ring buffer of ripples so new clicks don't replace ones still on screen;
+    // start = ms since mount (<0 = free slot). Oldest is recycled only when all
+    // MAX_RIPPLES are still alive.
+    ripples: Array.from({ length: MAX_RIPPLES }, () => ({ x: 0, y: 0, start: -1 })),
+    rippleIdx: 0,
   };
+  // Reused each frame to upload the ripple array (vec3 × MAX_RIPPLES).
+  const clicksBuf = new Float32Array(MAX_RIPPLES * 3);
 
   const scale = Math.min(window.devicePixelRatio || 1, MAX_DPR) * RENDER_SCALE;
   function resize() {
@@ -259,8 +269,20 @@ export function mountAurora(canvas, opts = {}) {
     gl.uniform1f(U.mouseAmt, state.mouseAmt);
     gl.uniform1f(U.intensity, state.intensity);
     gl.uniform1f(U.invert, state.invert);
-    const age = state.clickStart >= 0 ? (tMs - state.clickStart) / 1000 : -1;
-    gl.uniform3f(U.click, state.click[0], state.click[1], age > 2.4 ? -1 : age);
+
+    // Pack the live ripples; each lasts ~2.4s, then its slot frees up (age = -1).
+    for (let i = 0; i < MAX_RIPPLES; i++) {
+      const rip = state.ripples[i];
+      let age = -1;
+      if (rip.start >= 0) {
+        age = (tMs - rip.start) / 1000;
+        if (age > 2.4) { rip.start = -1; age = -1; }
+      }
+      clicksBuf[i * 3] = rip.x;
+      clicksBuf[i * 3 + 1] = rip.y;
+      clicksBuf[i * 3 + 2] = age;
+    }
+    gl.uniform3fv(U.clicks, clicksBuf);
 
     // Clear first: on tile-based mobile GPUs this discards the previous tile
     // contents (a cheap "fast clear") instead of reloading them, avoiding the
@@ -301,8 +323,11 @@ export function mountAurora(canvas, opts = {}) {
   const onLeave = () => { state.mouseAmtTarget = 0; };
   const onDown = (e) => {
     const p = pos(e);
-    state.click = [p[0], p[1], 0];
-    state.clickStart = performance.now() - t0;
+    const rip = state.ripples[state.rippleIdx];
+    rip.x = p[0];
+    rip.y = p[1];
+    rip.start = performance.now() - t0;
+    state.rippleIdx = (state.rippleIdx + 1) % MAX_RIPPLES;
     state.mouseTarget = p;
     state.mouseAmtTarget = 1;
   };
