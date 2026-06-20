@@ -111,8 +111,8 @@ export const STRINGS = {
     "footer.viaLocal": "через локальный каталог",
 
     // Home — hero
-    "home.heroPre": "Всё, что ",
-    "home.heroEm": "стоит посмотреть",
+    "home.heroPre": "Всё, ",
+    "home.heroEm": "что стоит посмотреть",
     "home.blurb":
       "Тщательно собранный каталог фильмов и сериалов.",
     "home.localNotice": "Это локальный каталог",
