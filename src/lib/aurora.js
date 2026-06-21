@@ -9,8 +9,10 @@
    full-viewport animated background stays cheap:
 
      • mono-only fragment shader — no palette/ember branches, fewer uniforms;
-     • backing store rendered at RENDER_SCALE of CSS pixels (smoke is soft, so
-       the downscale is invisible) with a capped DPR;
+     • backing store rendered at an ADAPTIVE fraction of CSS pixels — a hardware
+       heuristic picks the start, then it's nudged by measured frame time (down
+       when frames slip, cautiously up when there's headroom); the field is soft
+       so the small, infrequent changes are invisible. DPR is capped on top;
      • FBM reduced to 4 octaves;
      • frame loop throttled to ~FPS_CAP and paused while the tab is hidden;
      • prefers-reduced-motion → one static frame, no loop, no pointer reactivity.
@@ -23,7 +25,10 @@
    1 = dark smoke on white (light theme).
 ============================================================================= */
 
-const RENDER_SCALE = 0.62; // backing-store px per CSS px before DPR — soft field hides it
+const RENDER_SCALE = 0.62; // medium-tier starting scale; the adaptive loop moves it within [SCALE_MIN, SCALE_MAX]
+const SCALE_MIN = 0.4;     // weakest-hardware floor
+const SCALE_MAX = 1.0;     // strongest-hardware ceiling (multiplied by the capped DPR)
+const SCALE_STEP = 0.05;   // per-adjustment change — small enough to be imperceptible on the soft field
 const MAX_DPR = 1.5;
 const FPS_CAP = 32; // the field drifts at time*0.06, so ~32fps is imperceptibly smooth
 const NOISE_N = 256; // value-noise tile size (power-of-two so the texture can REPEAT)
@@ -75,11 +80,11 @@ const FRAG = `
   float noise(vec2 p){
     return texture2D(u_noise, (p + 0.5) / 256.0).r;
   }
-  // 4-octave FBM (down from 6) — enough texture once the field is downscaled.
+  // 6-octave FBM — more layers of fine structure (the adaptive scale keeps it cheap).
   float fbm(vec2 p){
     float v = 0.0, a = 0.5;
     mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 6; i++){
       v += a * noise(p);
       p = rot * p * 2.02;
       a *= 0.5;
@@ -101,12 +106,12 @@ const FRAG = `
     float md = length(toM);
     vec2 warpBias = toM * u_mouseAmt * 0.25 / (md + 0.35);
 
-    // domain warping (fbm of fbm)
-    vec2 q = vec2(fbm(st * 2.2 + vec2(0.0, t)),
-                  fbm(st * 2.2 + vec2(5.2, -t) + warpBias));
-    vec2 r = vec2(fbm(st * 2.2 + 1.7 * q + vec2(1.7, 9.2) + t * 0.5),
-                  fbm(st * 2.2 + 1.7 * q + vec2(8.3, 2.8) - t * 0.4));
-    float f = fbm(st * 2.2 + 2.4 * r + warpBias);
+    // domain warping (fbm of fbm) — stronger warp = more pronounced, layered wisps
+    vec2 q = vec2(fbm(st * 2.4 + vec2(0.0, t)),
+                  fbm(st * 2.4 + vec2(5.2, -t) + warpBias));
+    vec2 r = vec2(fbm(st * 2.4 + 1.9 * q + vec2(1.7, 9.2) + t * 0.5),
+                  fbm(st * 2.4 + 1.9 * q + vec2(8.3, 2.8) - t * 0.4));
+    float f = fbm(st * 2.4 + 2.9 * r + warpBias);
     f = clamp(f * 1.15, 0.0, 1.0);
 
     // monochrome — black & white smoke
@@ -239,11 +244,31 @@ export function mountAurora(canvas, opts = {}) {
   // Reused each frame to upload the ripple array (vec3 × MAX_RIPPLES).
   const clicksBuf = new Float32Array(MAX_RIPPLES * 3);
 
-  const scale = Math.min(window.devicePixelRatio || 1, MAX_DPR) * RENDER_SCALE;
+  // Adaptive render scale: start from a hardware heuristic, then let the frame
+  // loop nudge it (see adaptScale). Steps are tiny and the field is soft + behind
+  // a scrim, so resolution changes are imperceptible; the pattern is uv-normalised
+  // so resizing never shifts it.
+  let renderScale = (() => {
+    const cores = navigator.hardwareConcurrency || 4;
+    const mem = navigator.deviceMemory || 4;
+    const mobile = (navigator.maxTouchPoints || 0) > 1 && (window.devicePixelRatio || 1) >= 2;
+    let s = RENDER_SCALE;
+    if (mobile || cores <= 4 || mem <= 4) s = 0.5;
+    if (!mobile && cores >= 8 && mem >= 8) s = 0.78;
+    try {
+      const ext = gl.getExtension("WEBGL_debug_renderer_info");
+      const r = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || "") : "";
+      if (/Mali-[T34]|Adreno [234]|PowerVR/i.test(r)) s = Math.min(s, 0.42);
+      else if (/Apple|NVIDIA|GeForce|RTX|GTX|Radeon|AMD/i.test(r) && !mobile) s = Math.max(s, 0.85);
+    } catch (e) { /* renderer info unavailable / masked */ }
+    return Math.max(SCALE_MIN, Math.min(SCALE_MAX, s));
+  })();
+
   function resize() {
     const r = canvas.getBoundingClientRect();
-    const w = Math.max(1, Math.floor(r.width * scale));
-    const h = Math.max(1, Math.floor(r.height * scale));
+    const eff = Math.min(window.devicePixelRatio || 1, MAX_DPR) * renderScale;
+    const w = Math.max(1, Math.floor(r.width * eff));
+    const h = Math.max(1, Math.floor(r.height * eff));
     if (canvas.width !== w || canvas.height !== h) {
       canvas.width = w;
       canvas.height = h;
@@ -343,11 +368,43 @@ export function mountAurora(canvas, opts = {}) {
   let running = true;
   let last = -Infinity;
 
+  // Adaptive scaling: avgDelta is an EMA of the realised draw-to-draw interval.
+  // Pinned near minFrame when the device keeps up with the cap; it climbs when
+  // the GPU can't sustain the current scale. scaleCap remembers the level that
+  // once struggled so we never oscillate back up into it.
+  let avgDelta = minFrame;
+  let drawnFrames = 0;
+  let lastAdjust = 0;
+  let lastDownscale = -Infinity;
+  let scaleCap = SCALE_MAX;
+
+  function adaptScale(now) {
+    if (drawnFrames < 60) return; // ~2s warm-up before trusting the measurement
+    if (avgDelta > minFrame * 1.45 && renderScale > SCALE_MIN && now - lastAdjust > 1200) {
+      // frames slipping below the cap → drop a notch (responsive)
+      renderScale = Math.max(SCALE_MIN, renderScale - SCALE_STEP);
+      scaleCap = renderScale; // this level struggled — don't climb back above it
+      lastAdjust = now;
+      lastDownscale = now;
+    } else if (avgDelta < minFrame * 1.12 && renderScale + SCALE_STEP <= scaleCap + 1e-6 &&
+               renderScale < SCALE_MAX && now - lastAdjust > 3000 && now - lastDownscale > 6000) {
+      // pinned to the cap and stable for a while → cautiously sharpen
+      renderScale = Math.min(SCALE_MAX, renderScale + SCALE_STEP);
+      lastAdjust = now;
+    }
+  }
+
   function frame(now) {
     if (!running) return;
     raf = requestAnimationFrame(frame);
-    if (now - last < minFrame) return; // throttle to FPS_CAP
+    const delta = now - last;
+    if (delta < minFrame) return; // throttle to FPS_CAP
     last = now;
+    // Feed the EMA only across continuous frames; a resume/first-frame gap resets
+    // the warm-up so it can't trigger a spurious adjustment.
+    if (delta < 500) { avgDelta += (delta - avgDelta) * 0.1; drawnFrames++; }
+    else { avgDelta = minFrame; drawnFrames = 0; }
+    adaptScale(now);
     resize();
     draw(now - t0);
   }
