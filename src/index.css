@@ -444,9 +444,38 @@ input { font-family: inherit; }
     font-weight: 500;
 }
 .state-note {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     padding: 90px 0;
     text-align: center;
     color: var(--muted);
+}
+.state-loader {
+    width: 40px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    box-shadow: 0 0 0 0 #0004;
+    animation: l2 1.5s infinite linear;
+    position: relative;
+}
+.state-loader:before,
+.state-loader:after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0 #0004;
+    animation: inherit;
+    animation-delay: -0.5s;
+}
+.state-loader:after {
+    animation-delay: -1s;
+}
+@keyframes l2 {
+    100% {box-shadow: 0 0 0 40px #0000}
 }
 .state-note .big {
     font-family: var(--display-font);

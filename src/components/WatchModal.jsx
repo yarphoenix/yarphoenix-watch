@@ -40,11 +40,11 @@ export function WatchModal({ film, onClose }) {
       return undefined;
     }
     setStatus("loading");
-    const controller = new AbortController();
-    searchWatchSources({ title: film.title, year, type: film.type, lang, runtime, signal: controller.signal })
-      .then((r) => { setResults(r.results); setPartial(r.partial); setActiveSource("all"); setStatus("ready"); })
-      .catch((e) => { if (e.name !== "AbortError") setStatus("error"); });
-    return controller;
+      const controller = new AbortController();
+      searchWatchSources({ title: film.title, year, type: film.type, lang, runtime, signal: controller.signal })
+          .then((r) => { setResults(r.results); setPartial(r.partial); setActiveSource("all"); setStatus("ready"); })
+          .catch((e) => { if (e.name !== "AbortError") setStatus("error"); });
+      return controller;
   }, [film.title, film.type, year, runtime, lang]);
 
   useEffect(() => {
@@ -94,7 +94,12 @@ export function WatchModal({ film, onClose }) {
         </div>
 
         {status === "loading" && (
-          <div className="state-note"><div className="big">{t("watch.loading")}</div></div>
+          <div className="state-note">
+              <div className="state-loader"></div>
+              <div className="big">
+                  {t("watch.loading")}
+              </div>
+          </div>
         )}
 
         {status === "unconfigured" && (
