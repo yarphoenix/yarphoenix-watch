@@ -8,7 +8,7 @@ A black-and-white catalogue of films and series, built with React. A header
 by [Kinopoisk](https://kinopoiskapiunofficial.tech/). Either way the app falls
 back to a bundled local catalogue, so it keeps working offline or with no API key.
 
-> _The catalogue of everything worth watching
+> The catalogue of everything worth watching
 
 The interface is deliberately editorial: typographic placeholder posters, a
 phoenix wordmark, and real artwork rendered in grayscale to preserve the
