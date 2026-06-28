@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Yarphoenix Films</title>
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages — https://github.com/rafgraph/spa-github-pages
+      // GitHub Pages has no server-side rewrites, so a hard-refresh / shared deep link
+      // (e.g. /yarphoenix-movies/film/tt0111161) 404s. This page encodes the path into a
+      // query and redirects to index.html, where a matching snippet restores the real URL
+      // before react-router reads it.
+      var pathSegmentsToKeep = 1; // keep the /yarphoenix-movies project-page base
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
