@@ -6,6 +6,18 @@
     <meta name="theme-color" content="#000000" />
     <meta name="color-scheme" content="light dark" />
     <script>
+      /* Single Page Apps for GitHub Pages — decode the path that 404.html encoded,
+         restoring the real URL before react-router reads it. No-op on normal loads. */
+      (function (l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function (s) {
+            return s.replace(/~and~/g, '&');
+          }).join('?');
+          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
+        }
+      })(window.location);
+    </script>
+    <script>
       /* FOUC guard: apply the saved (or system) theme to <html> before first
          paint, so a pinned dark theme doesn't flash white on load. */
       (function () {

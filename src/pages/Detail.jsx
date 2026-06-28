@@ -1,13 +1,24 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLang } from "../i18n/LanguageContext";
 import { getProvider } from "../api";
 import { Poster } from "../components/Poster";
 import { Grid } from "../components/Grid";
 import { WatchModal } from "../components/WatchModal";
 
-export function Detail({ id, seed, onOpen, onHome }) {
+export function Detail({ id, seed }) {
   const { lang, t } = useLang();
   const api = getProvider(lang);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Back to the catalogue: step back in history when we came from within the app
+  // (returns to the home view with its search intact), else go to a fresh home
+  // (e.g. a cold deep-link straight to this page).
+  const goBack = () => {
+    if (location.key !== "default") navigate(-1);
+    else navigate("/");
+  };
 
   const [film, setFilm] = useState(seed || null);
   const [more, setMore] = useState([]);
@@ -41,7 +52,7 @@ export function Detail({ id, seed, onOpen, onHome }) {
       <div className="page">
         <div className="state-note">
           <div className="big">{t("detail.failedBig")}</div>
-          <button type="button" className="btn ghost retry" onClick={onHome}>{t("detail.backToCatalogue")}</button>
+          <button type="button" className="btn ghost retry" onClick={goBack}>{t("detail.backToCatalogue")}</button>
         </div>
       </div>
     );
@@ -53,7 +64,7 @@ export function Detail({ id, seed, onOpen, onHome }) {
   const hasCast = film.cast && film.cast.length > 0;
   return (
     <article className="detail page">
-      <button type="button" className="back" onClick={onHome}>{t("detail.back")}</button>
+      <button type="button" className="back" onClick={goBack}>{t("detail.back")}</button>
       <div className="detail-top">
         <div className="detail-poster"><Poster film={film} /></div>
         <div>
@@ -93,7 +104,7 @@ export function Detail({ id, seed, onOpen, onHome }) {
       {more.length > 0 && (
         <section className="more">
           <h2 className="section-label">{t("detail.moreLikeThis")}</h2>
-          <Grid films={more} onOpen={onOpen} cols={4} />
+          <Grid films={more} cols={4} />
         </section>
       )}
 

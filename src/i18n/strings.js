@@ -91,6 +91,8 @@ export const STRINGS = {
     "watch.source.rutube": "Rutube",
     "watch.source.vk": "VK",
     "watch.disclaimer": "Search results are selected automatically and may be inaccurate.",
+
+      "notFound.message" : "Looks like you are in wrong place"
   },
 
   ru: {
@@ -175,5 +177,7 @@ export const STRINGS = {
     "watch.source.rutube": "Rutube",
     "watch.source.vk": "VK",
       "watch.disclaimer": "Результаты подбираются автоматически и могут быть неточными.",
+
+      "notFound.message" : "Похоже, вы попали не туда"
   },
 };
