@@ -1,6 +1,6 @@
-# Yarphoenix Movies
+# yarphoenix watch
 
-**[Live demo → yarphoenix.github.io/yarphoenix-movies](https://yarphoenix.github.io/yarphoenix-movies/)**
+**[Live demo → yarphoenix.github.io/yarphoenix-watch](https://yarphoenix.github.io/yarphoenix-watch/)**
 
 A black-and-white catalogue of films and series, built with React. A header
 **EN / RU** toggle switches both the interface language and the data source:
