@@ -104,7 +104,7 @@ function App() {
       <main id="main-content" tabIndex={-1}>
         <Routes>
           <Route
-            path="/"
+            index
             element={
               <Home
                 query={query} setQuery={setQuery}
