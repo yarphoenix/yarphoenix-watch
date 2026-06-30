@@ -31,6 +31,9 @@ const FEATURED_IDS = [
   "tt0114339", // Savage
   "tt0122369", // The Abashiri Family
   "tt0138044", // The Great Dictator
+  "tt0245429", // Spirited Away (anime)
+  "tt5311514", // Your Name. (anime)
+  "tt0213338", // Cowboy Bebop (anime, series)
 ];
 
 // Map an OMDb record (full or partial search hit) onto the UI shape.

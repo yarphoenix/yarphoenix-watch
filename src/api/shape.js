@@ -13,6 +13,14 @@ import { FILMS } from "./data";
 // Treat OMDb's "N/A" (and empty values) as missing.
 export const na = (v) => (v && v !== "N/A" ? v : null);
 
+// Anime is a genre tag, not a `type` — `type` stays movie/series everywhere
+// else (poster badges, the watch API). A title counts as anime if any of its
+// genres match, regardless of whether it's a film or a series.
+const ANIME_GENRES = new Set(["anime", "animation", "аниме", "мультфильм"]);
+export function isAnime(film) {
+  return (film.genres || []).some((g) => ANIME_GENRES.has(String(g).trim().toLowerCase()));
+}
+
 // Stable 0..6 hash → drives the black & white placeholder poster palette.
 export function hashTone(s) {
   let h = 0;

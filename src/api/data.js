@@ -164,5 +164,23 @@ export const FILMS = [
     director: "I. Halvorsen", cast: ["P. Rhee", "T. Ferreira"],
     tagline: "The last machine remembers.",
     synopsis: "Long after the factories fell quiet, one engine keeps running on a fuel no one can name, in a city that forgot it was ever switched on."
+  },
+  {
+    id: "paper-crane-academy",
+    title: "Paper Crane Academy",
+    year: "2021", type: "series", runtime: "2 seasons", rating: "8.3",
+    genres: ["Animation", "Fantasy", "Coming-of-Age"], tone: 4,
+    director: "K. Amano", cast: ["R. Sato", "M. Inoue", "H. Tachibana"],
+    tagline: "Fold your fear into something that can fly.",
+    synopsis: "At a school built on the back of a sleeping crane god, a transfer student learns that every fold in the paper charms taught here costs the folder a memory."
+  },
+  {
+    id: "the-last-cicada",
+    title: "The Last Cicada",
+    year: "2023", type: "movie", runtime: "1h 47m", rating: "8.7",
+    genres: ["Animation", "Drama"], tone: 2,
+    director: "K. Amano", cast: ["H. Tachibana", "R. Sato"],
+    tagline: "One more summer, drawn by hand.",
+    synopsis: "A dying animator spends his last summer hand-painting the town he grew up in, frame by frame, so that someone else can remember it after he can't."
   }
 ];

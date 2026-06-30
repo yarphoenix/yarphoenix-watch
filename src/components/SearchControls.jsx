@@ -13,6 +13,7 @@ export function SearchControls({ query, setQuery, filter, setFilter, count }) {
     ["all", t("filters.all")],
     ["movie", t("filters.films")],
     ["series", t("filters.series")],
+    ["anime", t("filters.anime")],
   ];
   return (
     <search className="searchwrap">
