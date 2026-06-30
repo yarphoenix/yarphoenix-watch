@@ -50,7 +50,7 @@ export const STRINGS = {
     "filters.all": "All",
     "filters.films": "Films",
     "filters.series": "Series",
-    "filters.anime": "Anime/cartoon",
+    "filters.anime": "Anime/cartoons",
     "search.count": (n) => `${n} ${n === 1 ? "title" : "titles"}`,
 
     // Poster (card overlay) + card caption
@@ -134,7 +134,7 @@ export const STRINGS = {
     "filters.all": "Все",
     "filters.films": "Фильмы",
     "filters.series": "Сериалы",
-    "filters.anime": "Аниме/мультфильм",
+    "filters.anime": "Аниме/мультфильмы",
     "search.count": (n) =>
       `${n} ${pluralRu(n, ["результат", "результата", "результатов"])}`,
 
