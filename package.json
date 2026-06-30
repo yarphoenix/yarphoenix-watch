@@ -1,8 +1,8 @@
 {
-  "name": "yarphoenixmovies",
+  "name": "yarphoenixwatch",
   "version": "1.3.3",
   "private": true,
-  "homepage": "https://yarphoenix.github.io/yarphoenix-movies",
+  "homepage": "https://yarphoenix.github.io/yarphoenix-watch",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

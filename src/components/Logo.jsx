@@ -1,5 +1,5 @@
-import whitePhoenix from "../assets/phoenix-films-white.png";
-import phoenix from "../assets/phoenix-films.png";
+import whitePhoenix from "../assets/phoenix-watch-white.png";
+import phoenix from "../assets/phoenix-watch.png";
 import {useTheme} from "../theme/ThemeContext";
 import {useT} from "../i18n/LanguageContext";
 
@@ -19,7 +19,7 @@ export const Logo = () => {
                                 whiteSpace: "normal",
                             }
                         }>
-                            Yarphoenix Films
+                            Yarphoenix Watch
                         </span>
             </span>
         </>

@@ -1,5 +1,5 @@
-import phoenix from "../assets/phoenix-films.png";
-import phoenixWhite from "../assets/phoenix-films-white.png";
+import phoenix from "../assets/phoenix-watch.png";
+import phoenixWhite from "../assets/phoenix-watch-white.png";
 import { useT } from "../i18n/LanguageContext";
 
 // Tone → black & white poster palette. Mix of light & dark for rhythm.

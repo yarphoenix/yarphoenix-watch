@@ -1,11 +1,11 @@
 // ---------------------------------------------------------------------------
-// UI string dictionary for YARPHOENIX MOVIES.
+// UI string dictionary for YARPHOENIX WATCH.
 //
 // Keys are flat, dotted strings. Values are either a string or a function
 // (for interpolation / pluralisation). Looked up via the `t()` helper in
 // LanguageContext, which falls back to English and then to the key itself.
 //
-// Brand names ("Yarphoenix Films/Movies") are intentionally NOT translated.
+// Brand names ("Yarphoenix Watch") are intentionally NOT translated.
 // ---------------------------------------------------------------------------
 import { pluralRu } from "./plural";
 
@@ -15,7 +15,7 @@ export const STRINGS = {
     "app.skip": "Skip to content",
 
     // Header / nav
-    "header.homeAria": "YARPHOENIX MOVIES — home",
+    "header.homeAria": "YARPHOENIX WATCH — home",
     "header.logoAlt": "YARPHOENIX logo",
     "nav.primaryAria": "Primary",
     "lang.groupAria": "Language",
@@ -98,7 +98,7 @@ export const STRINGS = {
     "app.skip": "Перейти к содержимому",
 
     // Header / nav
-    "header.homeAria": "YARPHOENIX MOVIES — на главную",
+    "header.homeAria": "YARPHOENIX WATCH — на главную",
     "header.logoAlt": "Логотип YARPHOENIX",
     "nav.primaryAria": "Основная навигация",
     "lang.groupAria": "Язык",
