@@ -98,6 +98,57 @@ input { font-family: inherit; }
 }
 @keyframes fadeIn { from { transform: translateY(4px); } to { transform: translateY(0); } }
 
+/* ---------- Entrance animations (hero + searchbar, once per session) ---------- */
+@keyframes heroTitleDrop {
+    from { transform: translateY(-48px); opacity: 0; }
+    to   { transform: translateY(0);      opacity: 1; }
+}
+@keyframes heroBlurbSlide {
+    from { transform: translateX(-48px); opacity: 0; }
+    to   { transform: translateX(0);      opacity: 1; }
+}
+@keyframes searchbarGrow {
+    from { width: min(230px, 70%); }
+    to   { width: 100%; }
+}
+@keyframes searchInputReveal {
+    0%, 65% { opacity: 0; }
+    100%    { opacity: 1; }
+}
+/* Gated behind html.intro-fresh (set by an inline <head> script in
+   public/index.html) so the whole entrance sequence plays once per browser
+   session — reloading mid-session lands straight on the finished layout. */
+html.intro-fresh .hero-bare h1 {
+    animation: heroTitleDrop 1.15s ease-in-out both;
+}
+html.intro-fresh .hero-bare .blurb {
+    animation: heroBlurbSlide 1.15s ease-in-out both;
+    /* Starts only once heroTitleDrop (1.15s, no delay) has fully finished. */
+    animation-delay: 1.15s;
+}
+html.intro-fresh .searchbar {
+    animation: searchbarGrow 1.1s cubic-bezier(.2,.7,.2,1) both;
+    animation-delay: .32s;
+}
+html.intro-fresh .search-fake-placeholder {
+    animation: searchInputReveal 1.1s linear backwards;
+    animation-delay: .32s;
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero-bare h1, .hero-bare .blurb, .searchbar,
+    .home, .detail, .watch-card {
+        animation: none !important;
+        opacity: 1 !important;
+    }
+    /* Not opacity:1 !important here — it would out-rank the
+       input:not(:placeholder-shown) hide rule and leave the placeholder
+       floating over typed text. Killing the animation is enough; it rests
+       at its own opacity:1 default. */
+    .search-fake-placeholder {
+        animation: none !important;
+    }
+}
+
 
 /* ---------- Layout shell ---------- */
 .page {
@@ -195,13 +246,38 @@ input { font-family: inherit; }
 .searchbar svg {
     flex: none;
 }
+.search-field {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
 .searchbar input {
-    flex: 1; border: none; outline: none; background: none;
+    width: 100%; margin: 0; padding: 0; box-sizing: border-box;
+    border: none; outline: none; background: none;
     font-size: clamp(20px, 3vw, 34px); font-weight: 300; letter-spacing: -0.01em;
     color: var(--ink);
 }
 .searchbar input::placeholder {
+    /* Kept permanently invisible: Chrome/Safari don't run animations or
+       transitions on ::placeholder. The fade-in lives on the decorative
+       .search-fake-placeholder span instead, which is a real element. */
     color: var(--chip-title);
+    opacity: 0;
+}
+.search-fake-placeholder {
+    position: absolute; left: 0; right: 0;
+    font-size: clamp(20px, 3vw, 34px); font-weight: 300; letter-spacing: -0.01em;
+    color: var(--chip-title);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    pointer-events: none;
+    opacity: 1;
+}
+/* Hide the decorative placeholder once there's a query — mirrors native
+   :placeholder-shown behavior, instantly, with no animation replay. */
+.search-field input:not(:placeholder-shown) ~ .search-fake-placeholder {
+    opacity: 0;
 }
 
 .searchbar .clear {
@@ -568,6 +644,11 @@ input { font-family: inherit; }
 :root.theme-dark .hero-bare .blurb {
     color: rgba(255,255,255,0.78);
     text-shadow: 0 1px 20px rgba(0,0,0,0.5);
+}
+
+/* ---------- Home page ---------- */
+.home {
+    animation: fadeIn .4s both;
 }
 
 /* ---------- Detail page ---------- */
