@@ -32,6 +32,22 @@
         } catch (e) {}
       })();
     </script>
+    <script>
+      /* Hero entrance (title drop / blurb slide / searchbar reveal) plays once
+         per browser session. sessionStorage survives reloads within the same
+         tab but clears when the tab/browser closes, so the next visit (new
+         session) sees the full intro again. Runs synchronously before <body>
+         paints, so there's no flash of the animated state either way. */
+      try {
+        if (!sessionStorage.getItem('ypIntroPlayed')) {
+          document.documentElement.classList.add('intro-fresh');
+          sessionStorage.setItem('ypIntroPlayed', '1');
+        }
+      } catch (e) {
+        // sessionStorage blocked (private mode, etc.) — fail open and animate.
+        document.documentElement.classList.add('intro-fresh');
+      }
+    </script>
     <meta
       name="description"
       content="A black-and-white catalogue of films and series — browse and search titles, with details from OMDb."

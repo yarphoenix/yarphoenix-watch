@@ -6,7 +6,7 @@ import { useT } from "../i18n/LanguageContext";
 export function Home({ query, setQuery, filter, setFilter, results, cols, status, onRetry, areLocalFilms }) {
   const t = useT();
   return (
-    <div style={{ animation: "fadeIn .4s both" }}>
+    <div className="home">
       <div className="page">
         <div className="hero-bare">
           <h1>{t("home.heroPre")}<em>{t("home.heroEm")}</em></h1>

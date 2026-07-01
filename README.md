@@ -41,7 +41,8 @@ surfaces.
 - **Curated featured catalogue** — a popular/curated set fetched in parallel as the
   landing view (before the visitor searches).
 - **Live search** — debounced (≈350 ms) queries against the active provider, with
-  `All / Films / Series` filter chips and a live result count.
+  `All / Films / Series / Anime` filter chips and a live result count. ("Anime" is a genre-based
+  filter applied client-side — not a provider type — so films and series both qualify.)
 - **Detail pages** — poster, rating, runtime, year, genres, synopsis, director,
   cast, plus a "More like this" row derived from the title's first genre.
 - **Watch — find where to stream** — a _Смотреть / Watch_ action on every detail page
@@ -56,14 +57,16 @@ surfaces.
   button, and an empty state for searches with no matches.
 - **Black-and-white poster system** — each title gets a deterministic `tone` (0–6)
   that drives a light/dark placeholder palette; real artwork is shown `grayscale`.
-- **No router, no state library** — routing, i18n, and data orchestration are all
-  plain React hooks and context.
+- **URL routing & deep links** — `react-router-dom` v7 (`BrowserRouter`): shareable `/film/:id`
+  detail pages, search & filter synced to the query string (`?q=&type=`), working browser
+  back/forward, and a GitHub Pages `404.html` redirect so hard-refreshed deep links resolve.
 
 ## Tech stack
 
 | Area        | Choice                                                                 |
 | ----------- | ---------------------------------------------------------------------- |
 | Framework   | React 19 + ReactDOM 19                                                  |
+| Routing     | [react-router-dom](https://reactrouter.com/) v7 (`BrowserRouter`) + GitHub Pages SPA fallback |
 | Tooling     | [Create React App](https://github.com/facebook/create-react-app) (`react-scripts` 5) |
 | Data (EN)   | [OMDb API](https://www.omdbapi.com/)                                    |
 | Data (RU)   | [Kinopoisk](https://kinopoiskapiunofficial.tech/) (unofficial API)      |
@@ -117,7 +120,8 @@ REACT_APP_WATCH_API=https://your-watch-api.example
 npm start
 ```
 
-Open <http://localhost:3000>. The page reloads on edits.
+Open <http://localhost:3000/yarphoenix-movies>. (The dev server serves under the `homepage`
+base path, which is also the router `basename`, so the plain `/` won't match.) The page reloads on edits.
 
 ## Available scripts
 
@@ -134,7 +138,7 @@ Open <http://localhost:3000>. The page reloads on edits.
 src/
 ├── api/
 │   ├── data.js              # Local fallback catalogue (18 titles)
-│   ├── shape.js             # Shared helpers: tone hashing, na(), local fallback
+│   ├── shape.js             # Shared helpers: tone hashing, na(), isAnime(), local fallback
 │   ├── index.js             # getProvider(lang) — provider registry
 │   ├── watch.js             # Watch-search client → REACT_APP_WATCH_API
 │   └── providers/
@@ -165,12 +169,14 @@ src/
 │   └── Footer.jsx           # Footer (shows the active data source)
 ├── pages/
 │   ├── Home.jsx             # Hero + search + catalogue grid
-│   └── Detail.jsx           # Single title view + "More like this"
-├── App.jsx                  # Routing + language-driven catalogue loading
-├── index.js                 # Entry point — wraps <App> in Theme + Language providers
+│   ├── Detail.jsx           # Single title view + "More like this"
+│   └── NotFound.jsx         # 404 page (catch-all `*` route)
+├── App.jsx                  # <Routes> + URL-synced search + language-driven catalogue loading
+├── index.js                 # Entry point — <BrowserRouter> → Theme → Language providers
 └── index.css                # App styles
 public/
-└── index.html               # HTML shell, fonts, theme/glass tokens, FOUC boot script
+├── index.html               # HTML shell, fonts, FOUC theme boot + SPA-decode scripts
+└── 404.html                 # GitHub Pages SPA fallback (redirects deep links to index.html)
 ```
 
 ## How the data layer works
@@ -226,7 +232,9 @@ Hosted on **GitHub Pages** and deployed automatically by **GitHub Actions**
 ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) on every push to
 `main`: CRA build → upload Pages artifact → deploy. API keys and `REACT_APP_WATCH_API`
 are injected from repo secrets at build time, and `homepage` in `package.json` sets the
-`/yarphoenix-movies/` base path.
+`/yarphoenix-movies/` base path (also the router `basename`). `public/404.html` supplies the
+single-page-app fallback so hard-refreshed deep links resolve. (Pages **Source** must be set to
+**GitHub Actions**, not a branch.)
 
 ## Design notes
 
@@ -244,8 +252,11 @@ are injected from repo secrets at build time, and `homepage` in `package.json` s
   consistent across renders.
 - **Grayscale artwork** — real posters (OMDb or Kinopoisk) are drawn with a
   `grayscale(1)` filter and a gradient title overlay to match the placeholders.
-- **Routing** — there's no `react-router`; `App.jsx` holds a small `route` object
-  (`home` or `film`) and swaps pages, scrolling to top on each change.
+- **Routing** — `react-router-dom` v7 (`BrowserRouter`, `basename` = `/yarphoenix-movies`). Cards are
+  `<Link>`s that carry the clicked film in history state (`seed`) so the detail page shows its poster
+  instantly while it fetches; search & filter live in `?q=&type=`. GitHub Pages has no server
+  rewrites, so [`public/404.html`](public/404.html) encodes the path and redirects to `index.html`,
+  where an inline snippet restores the URL before the router reads it (rafgraph _spa-github-pages_).
 
 ---
 

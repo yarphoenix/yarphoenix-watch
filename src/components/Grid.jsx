@@ -8,7 +8,7 @@ export function Grid({ films, cols }) {
     <ul className="grid" role="list" style={{ "--cols": cols }}>
       {films.map((f, i) => (
         <li key={f.id}>
-          <PosterCard film={f} index={i} />
+          <PosterCard film={f} index={i} cols={cols} />
         </li>
       ))}
     </ul>

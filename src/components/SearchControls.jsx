@@ -20,13 +20,16 @@ export function SearchControls({ query, setQuery, filter, setFilter, count }) {
       <div className="searchbar">
         <SearchIcon />
         <label htmlFor="catalogue-search" className="visually-hidden">{t("search.label")}</label>
-        <input
-          id="catalogue-search"
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("search.placeholder")}
-        />
+        <div className="search-field">
+          <input
+            id="catalogue-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("search.placeholder")}
+          />
+          <span className="search-fake-placeholder" aria-hidden="true">{t("search.placeholder")}</span>
+        </div>
         {query && <button type="button" className="clear" onClick={() => setQuery("")}>{t("search.clear")}</button>}
       </div>
       <div className="controls">
