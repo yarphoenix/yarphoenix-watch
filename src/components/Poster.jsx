@@ -70,9 +70,9 @@ export function Poster({ film, variant = "card" }) {
         }}
       >
         {/* base layer — always grayscale */}
-        <img className="poster__image" src={film.poster} alt={film.title} />
+        <img loading="lazy" className="poster__image" src={film.poster} alt={film.title} />
         {/* colour layer — revealed only within the cursor spotlight (see index.css) */}
-        <img className="poster__image poster__image--color" src={film.poster} alt="" aria-hidden="true" />
+        <img loading="lazy"  className="poster__image poster__image--color" src={film.poster} alt="" aria-hidden="true" />
         <div
           aria-hidden="true"
           style={{
