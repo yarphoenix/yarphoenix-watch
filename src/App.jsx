@@ -7,6 +7,7 @@ import { Home } from "./pages/Home";
 import { Detail } from "./pages/Detail";
 import { AuroraBackground } from "./components/AuroraBackground";
 import { getProvider } from "./api";
+import { isAnime } from "./api/shape";
 import { useLang } from "./i18n/LanguageContext";
 
 const COLUMNS = 5;
@@ -56,13 +57,25 @@ function App() {
   const reqId = useRef(0);
 
   // Fetch the catalogue: featured set when the query is empty, search otherwise.
+  // "anime" isn't a provider `type` (only movie/series are) — it's a genre tag,
+  // so it's never forwarded as the `type` param and is applied as a post-filter.
   const loadCatalogue = useCallback(async (q, type) => {
     const mine = ++reqId.current;
     setStatus("loading");
     try {
-      const data = q.trim()
-        ? await api.search(q, { type: type === "all" ? undefined : type })
-        : (type === "all" ? await api.featured() : (await api.featured()).filter((f) => f.type === type));
+      const apiType = type === "movie" || type === "series" ? type : undefined;
+      let data = q.trim()
+        ? await api.search(q, { type: apiType })
+        : apiType ? (await api.featured()).filter((f) => f.type === apiType) : await api.featured();
+      if (type === "anime") {
+        // Some providers' search hits omit genre data (e.g. OMDb's `s=`
+        // endpoint) — fetch the full record before classifying those.
+        data = await Promise.all(data.map(async (f) => {
+          if (f.genres.length) return f;
+          try { return (await api.detail(f.id)) || f; } catch { return f; }
+        }));
+        data = data.filter(isAnime);
+      }
       if (mine !== reqId.current) return; // a newer request superseded this one
       setFilms(data);
       setStatus("ready");
