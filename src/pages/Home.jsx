@@ -3,7 +3,7 @@ import { Grid } from "../components/Grid";
 import { SkeletonGrid } from "../components/Skeleton";
 import { useT } from "../i18n/LanguageContext";
 
-export function Home({ query, setQuery, filter, setFilter, results, onOpen, cols, status, onRetry, areLocalFilms }) {
+export function Home({ query, setQuery, filter, setFilter, results, cols, status, onRetry, areLocalFilms }) {
   const t = useT();
   return (
     <div style={{ animation: "fadeIn .4s both" }}>
@@ -29,7 +29,7 @@ export function Home({ query, setQuery, filter, setFilter, results, onOpen, cols
             <div>{t("home.emptyDetail")}</div>
           </div>
         ) : (
-          <Grid films={results} onOpen={onOpen} cols={cols} />
+          <Grid films={results} cols={cols} />
         )}
       </div>
     </div>

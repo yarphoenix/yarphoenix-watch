@@ -1,19 +1,22 @@
+import { Link } from "react-router-dom";
 import { Poster } from "./Poster";
 import { useT } from "../i18n/LanguageContext";
 
-// Grid card: poster + caption underneath.
-export function PosterCard({ film, onOpen, index }) {
+// Grid card: a link to the title, carrying the film as `seed` in history state so
+// the detail page can render the poster instantly while it fetches full details.
+export function PosterCard({ film, index }) {
   const t = useT();
   const typeLabel = film.type === "series" ? t("card.series") : t("card.film");
   return (
-    <button
-      type="button"
+    <Link
       className="card"
-      onClick={() => onOpen(film.id)}
+      to={`/film/${film.id}`}
+      state={{ seed: film }}
       aria-label={t("card.aria", film.title, film.year, typeLabel)}
       style={{
         textAlign: "left",
         color: "inherit",
+        textDecoration: "none",
         display: "block",
         width: "100%",
         animation: `fadeUp .5s both`,
@@ -40,6 +43,6 @@ export function PosterCard({ film, onOpen, index }) {
           <span style={{textTransform: "capitalize"}}>{typeLabel}</span>
         </span>
       </div>
-    </button>
+    </Link>
   );
 }

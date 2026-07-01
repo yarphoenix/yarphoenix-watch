@@ -129,6 +129,7 @@ input { font-family: inherit; }
     border: none;
     padding: 0;
     color: var(--ink);
+    text-decoration: none;
 }
 .brand img {
     width: 34px;
@@ -1043,4 +1044,55 @@ input[type="search"]::-webkit-search-decoration {
 }
 .aurora-bg.is-light .aurora-bg-scrim {
     background: linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.50) 60%, rgba(255,255,255,0.66) 100%);
+}
+
+.not-found {
+    padding-block: 150px;
+    display: flex;
+    gap: 16px;
+}
+
+.not-found__code {
+    font-weight: bolder;
+    font-size: 270px;
+}
+
+.not-found__message {
+    margin-top: 68px;
+    margin-bottom: 37px;
+    line-height: 4rem;
+    font-weight: bold;
+    font-size: 60px;
+}
+
+.not-fount__escape-btn {
+    text-decoration: none;
+    font-size: 25px;
+}
+
+
+@media (max-width: 768px) {
+    .not-found {
+        padding-block: 100px;
+        flex-direction: column;
+    }
+
+    .not-found__code {
+        font-size: 230px;
+    }
+
+    .not-found__message {
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 380px) {
+    .not-found__code {
+        font-size: 150px;
+    }
+
+    .not-found__message {
+        margin-top: 10px;
+        font-size: 50px;
+    }
 }

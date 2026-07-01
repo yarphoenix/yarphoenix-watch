@@ -1,17 +1,18 @@
 import '../index.css';
+import { Link } from 'react-router-dom';
 import { useT } from '../i18n/LanguageContext';
 import { LanguageToggle } from '../components/LanguageToggle';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { Logo } from '../components/Logo';
 
-const Header = ({ onHome }) => {
+const Header = () => {
     const t = useT();
     return (
         <header className="site-header">
             <div className="page bar">
-                <button type="button" className="brand" onClick={onHome} aria-label={t('header.homeAria')}>
+                <Link to="/" className="brand" aria-label={t('header.homeAria')}>
                     <Logo />
-                </button>
+                </Link>
                 <nav className="nav" aria-label={t('nav.primaryAria')}>
                     <LanguageToggle />
                     <ThemeToggle />
