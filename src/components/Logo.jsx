@@ -1,27 +1,10 @@
-import whitePhoenix from "../assets/phoenix-watch-white.png";
-import phoenix from "../assets/phoenix-watch.png";
-import {useTheme} from "../theme/ThemeContext";
+import logo from "../assets/yarphoenix-watch-logo.svg";
 import {useT} from "../i18n/LanguageContext";
 
+// Combined icon+wordmark mark in a single file — dark theme flips it to
+// white via a CSS filter (see .brand-logo) rather than swapping source,
+// since it's one flat black composition, not two theme-specific assets.
 export const Logo = () => {
     const t = useT();
-    const { theme } = useTheme();
-    const dark = theme === "dark";
-
-    return (
-        <>
-            <img src={dark ? whitePhoenix : phoenix} alt={t('header.logoAlt')} />
-            <span className="lockup">
-                        <span className="name wordmark" style={
-                            {
-                                display: "inline-block",
-                                width: "min-content",
-                                whiteSpace: "normal",
-                            }
-                        }>
-                            Yarphoenix Watch
-                        </span>
-            </span>
-        </>
-    )
+    return <img src={logo} alt={t('header.logoAlt')} className="brand-logo" />;
 }

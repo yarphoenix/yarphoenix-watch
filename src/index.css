@@ -182,20 +182,22 @@ html.intro-fresh .search-fake-placeholder {
     color: var(--ink);
     text-decoration: none;
 }
-.brand img {
-    width: 45px;
-    height: 45px;
+/* Combined icon+wordmark mark (SVG, single fill colour baked in as black) —
+   inverted to white in dark theme via filter since it's one flat image, not
+   theme-specific source files. */
+.brand-logo {
+    height: 47px;
+    width: auto;
     object-fit: contain;
     display: block;
 }
-.brand .lockup {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    text-align: left;
+@media (max-width: 560px) {
+    .brand-logo {
+        height: 36px;
+    }
 }
-.brand .name {
-    font-size: 19px;
+:root.theme-dark .brand-logo {
+    filter: invert(1);
 }
 .nav {
     display: flex;
@@ -826,14 +828,8 @@ html.intro-fresh .search-fake-placeholder {
     padding: 40px 0; gap: 20px;
     flex-wrap: wrap;
 }
-.site-footer .fbrand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.site-footer img {
-    width: 30px;
-    height: 30px;
+.site-footer .brand-logo {
+    height: 40px;
 }
 .site-footer .fmark {
     font-family: 'IBM Plex Mono', monospace;
